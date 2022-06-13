@@ -5,28 +5,41 @@ import java.util.Random;
 
 import static Boggle.BoggleGame.verifyWord_Board;
 
-// todo: comment this class
-
 /**
  * Subclass of Player superclass: Computer player
  */
 public class Computer extends Player {
+
     private final int difficulty;
     private final ArrayList<String> usedWords = new ArrayList<>();
     private final ArrayList<String> possibleWords = new ArrayList<>();
 
+    /**
+     * Constructor method for computer player
+     * @param name player's name (randomly generate for computer player)
+     * @param score player's score
+     * @param difficulty computer player's difficulty level
+     */
     public Computer (String name, int score, int difficulty) {
         super();
         this.difficulty = difficulty;
     }
 
+    /**
+     * Returns ID of the computer player
+     * @return "computer" and the difficulty level of the computer, 0(easiest) - 3(hardest)
+     */
     public String getID() {return ("computer" + difficulty); }
 
-    /* todo: optimize this algorithm (currently linear and too slow)
-     *  search each node on board, and compare each added letter to possible words in the dictionary
+    /**
+     * Returns all valid words currently on the board
+     * @param board char 2d array of the game board
+     * @param dictionary string array of the words in the dictionary
      */
-    public void getWords (char[] board, String[] dictionary) {
-
+    public void getWords (char[][] board, String[] dictionary) {
+        /* todo: optimize this algorithm (currently linear and too slow)
+         *  search each node on board, and compare each added letter to possible words in the dictionary
+         */
         for (String word : dictionary) {
             if (verifyWord_Board(board, word)) { // todo: implement verifyWord_Board method
                 possibleWords.add(word);
