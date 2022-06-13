@@ -25,11 +25,7 @@ public class Computer extends Player {
         this.difficulty = difficulty;
     }
 
-    /**
-     * Returns ID of the computer player
-     * @return "computer" and the difficulty level of the computer, 0(easiest) - 3(hardest)
-     */
-    public String getID() {return ("computer" + difficulty); }
+    public String getID() {return ("computer" + difficulty + ": " + name); }
 
     /**
      * Returns all valid words currently on the board
