@@ -7,8 +7,9 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class BoggleGame {
-    static ArrayList<String> dictionary;
-    static char[][] letterPossibilities = {
+    public static int targetScore;
+    public static ArrayList<String> dictionary = new ArrayList<String>();
+    public static char[][] letterPossibilities = {
             {'A','A','A','F','R','S'},
             {'A','A','E','E','E','E'},
             {'A','A','F','I','R','S'},
@@ -41,9 +42,8 @@ public class BoggleGame {
         Scanner dictReader = new Scanner(dict);
         while (dictReader.hasNext()) {
             dictionary.add(dictReader.next());
-        }
 
-        verifyWord_Dict("abs", 0, )
+        }
 
         BoggleGUI myFrame = new BoggleGUI();
     }
@@ -74,6 +74,26 @@ public class BoggleGame {
         return board;
     }
 
+    /**
+     *
+     * @param player1
+     * @param player2
+     * @return 1 if player 1 wins
+     *         2 if player 2 wins
+     *         -1 if there is no winner yet
+     */
+    public static int isWinner(Player player1, Player player2) {
+
+        if(player1.getScore() > targetScore) {
+            return 1;
+        }
+        else if(player2.getScore() > targetScore) {
+            return 2;
+        }
+        else {
+            return -1;
+        }
+    }
     /**
      * Binary search dictionary for the given string
      * @param target the string to search for
@@ -112,13 +132,25 @@ public class BoggleGame {
         return false;
     }
 
-    public static boolean verifyWord_Board(char[] dictionary, String target) {
+    public static boolean verifyWord_Board(char[][] board, String target) {
 
     }
     //Searching in board for word
     public static boolean searchPaths(String target, int i, int j, int index, boolean[][] visited){
         if(index == target.length()){
-            for(i = 0; i < )
+
         }
+    }
+
+    /**
+     * Reset variable values for new games
+     */
+    public static void reset() {
+        /*
+        delete player instances
+        targetScore
+        minimum character amount
+
+        */
     }
 }
