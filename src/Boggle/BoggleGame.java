@@ -6,36 +6,37 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 
+/**
+ * Main class to the Boggle game, will contain global variables for the whole project as well as utility methods
+ */
 public class BoggleGame {
     public static int targetScore;
-    public static ArrayList<String> dictionary = new ArrayList<String>();
-    public static char[][] letterPossibilities = {
-            {'A','A','A','F','R','S'},
-            {'A','A','E','E','E','E'},
-            {'A','A','F','I','R','S'},
-            {'A','D','E','N','N','N'},
-            {'A','E','E','E','E','M'},
-            {'A','E','E','G','M','U'},
-            {'A','E','G','M','N','N'},
-            {'A','F','I','R','S','Y'},
-            {'B','J','K','Q','X','Z'},
-            {'C','C','N','S','T','W'},
-            {'C','E','I','I','L','T'},
-            {'C','E','I','L','P','T'},
-            {'C','E','I','P','S','T'},
-            {'D','D','L','N','O','R'},
-            {'D','H','H','L','O','R'},
-            {'D','H','H','N','O','T'},
-            {'D','H','L','N','O','R'},
-            {'E','I','I','I','T','T'},
-            {'E','M','O','T','T','T'},
-            {'E','N','S','S','S','U'},
-            {'F','I','P','R','S','Y'},
-            {'G','O','R','R','V','W'},
-            {'H','I','P','R','R','Y'},
-            {'N','O','O','T','U','W'},
-            {'O','O','O','T','T','U'}
-    };
+    public static ArrayList<String> dictionary = new ArrayList<>();
+    public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'},
+                                                    {'A','A','E','E','E','E'},
+                                                    {'A','A','F','I','R','S'},
+                                                    {'A','D','E','N','N','N'},
+                                                    {'A','E','E','E','E','M'},
+                                                    {'A','E','E','G','M','U'},
+                                                    {'A','E','G','M','N','N'},
+                                                    {'A','F','I','R','S','Y'},
+                                                    {'B','J','K','Q','X','Z'},
+                                                    {'C','C','N','S','T','W'},
+                                                    {'C','E','I','I','L','T'},
+                                                    {'C','E','I','L','P','T'},
+                                                    {'C','E','I','P','S','T'},
+                                                    {'D','D','L','N','O','R'},
+                                                    {'D','H','H','L','O','R'},
+                                                    {'D','H','H','N','O','T'},
+                                                    {'D','H','L','N','O','R'},
+                                                    {'E','I','I','I','T','T'},
+                                                    {'E','M','O','T','T','T'},
+                                                    {'E','N','S','S','S','U'},
+                                                    {'F','I','P','R','S','Y'},
+                                                    {'G','O','R','R','V','W'},
+                                                    {'H','I','P','R','R','Y'},
+                                                    {'N','O','O','T','U','W'},
+                                                    {'O','O','O','T','T','U'}  };
 
     public static void main(String[] args) throws IOException {
         File dict = new File("dictionary.txt");
@@ -84,10 +85,10 @@ public class BoggleGame {
      */
     public static int isWinner(Player player1, Player player2) {
 
-        if(player1.getScore() > targetScore) {
+        if (player1.getScore() > targetScore) {
             return 1;
         }
-        else if(player2.getScore() > targetScore) {
+        else if (player2.getScore() > targetScore) {
             return 2;
         }
         else {
@@ -137,7 +138,7 @@ public class BoggleGame {
     }
     //Searching in board for word
     public static boolean searchPaths(String target, int i, int j, int index, boolean[][] visited){
-        if(index == target.length()){
+        if (index == target.length()){
 
         }
     }
