@@ -1,6 +1,8 @@
 package Boggle;
 
-// todo: comment this class
+/**
+ * Subclass of Player superclass: Human player
+ */
 public class Human extends Player {
 
     public Human(String name, int score) {
