@@ -10,8 +10,9 @@ public class BoggleGUI extends JFrame implements ActionListener{
     JLabel[][] grid;
     JPanel upper, middle, lower;    //  3 main panels
     JPanel buttons, scoreBoard;     //  Panels within panels
-    JButton start, pause,
+    JButton start, pause, restart, exit;
     JLabel p1, p2, title, instructions;
+    JTextField principleValue, minChar;
 
 
     public BoggleGUI() {
@@ -26,6 +27,21 @@ public class BoggleGUI extends JFrame implements ActionListener{
 
         middle = new JPanel(new FlowLayout());
 
+        buttons = new JPanel(new GridLayout(2, 2));
+        start = new JButton("Start");
+        buttons.add(start);
+        pause = new JButton("Pause");
+        buttons.add(pause);
+        restart = new JButton("Restart");
+        buttons.add(restart);
+        exit = new JButton("Exit");
+        buttons.add(exit);
+        middle.add(buttons);
+
+        principleValue = new JTextField("Target Score");
+        middle.add(principleValue);
+        minChar = new JTextField("Shortest word allowed");
+        middle.add(minChar);
 
 
 
@@ -38,9 +54,9 @@ public class BoggleGUI extends JFrame implements ActionListener{
             }
         }
 
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                lower.add(grid[i][j]);
+        for (JLabel[] labels : grid) {
+            for (JLabel label : labels) {
+                lower.add(label);
             }
         }
         add(lower);
@@ -50,6 +66,13 @@ public class BoggleGUI extends JFrame implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if(e.getSource().equalsIgnoreCase("shake up board")) {
+            char[][] characterGrid = generateBoard();
+            for(int i = 0; i<5; i++) {
+                for(int j = 0; j<5; j++) {
+                    grid[i][j].setText(characterGrid[i][j].toString());
+                }
+            }
+        }
     }
 }
