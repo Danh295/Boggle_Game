@@ -1,6 +1,8 @@
 package Boggle;
 
-// todo: comment this class
+/**
+ * Abstract parent class for all game players
+ */
 public abstract class Player {
     String name;
     int score;
