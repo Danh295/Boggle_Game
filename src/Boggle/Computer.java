@@ -3,11 +3,17 @@ package Boggle;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static Boggle.BoggleGame.verifyWord_Board;
+
 // todo: comment this class
+
+/**
+ * Subclass of Player superclass: Computer player
+ */
 public class Computer extends Player {
-    private int difficulty;
-    private ArrayList<String> usedWords = new ArrayList<>();
-    private ArrayList<String> possibleWords = new ArrayList<>();
+    private final int difficulty;
+    private final ArrayList<String> usedWords = new ArrayList<>();
+    private final ArrayList<String> possibleWords = new ArrayList<>();
 
     public Computer (String name, int score, int difficulty) {
         super();
