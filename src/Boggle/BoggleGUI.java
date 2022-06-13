@@ -3,7 +3,8 @@ package Boggle;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.Random;
+
+import static Boggle.BoggleGame.generateBoard;
 
 public class BoggleGUI extends JFrame implements ActionListener{
 
@@ -65,12 +66,14 @@ public class BoggleGUI extends JFrame implements ActionListener{
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equalsIgnoreCase("shake up board")) {
+    public void actionPerformed(ActionEvent event) {
+        String command = event.getActionCommand();
+
+        if(command.equals("shake up board")) {
             char[][] characterGrid = generateBoard();
             for(int i = 0; i<5; i++) {
                 for(int j = 0; j<5; j++) {
-                    grid[i][j].setText(characterGrid[i][j].toString());
+                    grid[i][j].setText(String.valueOf(characterGrid[i][j]));
                 }
             }
         }
