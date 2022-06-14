@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-import static Boggle.BoggleGame.generateBoard;
+import static Boggle.BoggleGame.board;
 
 public class BoggleGUI extends JFrame implements ActionListener{
 
@@ -98,10 +98,15 @@ public class BoggleGUI extends JFrame implements ActionListener{
         String command = event.getActionCommand();
 
         if(command.equals("shake up board")) {
-            char[][] characterGrid = generateBoard();
+//            char[][] characterGrid = generateBoard();
+            /* this is danny, i changed the generateBoard method into a void
+             * method and just made the game board into a global variable. so
+             * instead of needing to create a new one everywhere you can just
+             * call it from the class
+             */
             for(int i = 0; i<5; i++) {
                 for(int j = 0; j<5; j++) {
-                    grid[i][j].setText(String.valueOf(characterGrid[i][j]));
+                    grid[i][j].setText(String.valueOf(board[i][j]));
                 }
             }
         }
