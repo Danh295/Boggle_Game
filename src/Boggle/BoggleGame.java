@@ -37,6 +37,7 @@ public class BoggleGame {
                                                     {'H','I','P','R','R','Y'},
                                                     {'N','O','O','T','U','W'},
                                                     {'O','O','O','T','T','U'}  };
+    public static int maxWordLength;
 
     public static void main(String[] args) throws IOException {
         File dict = new File("dictionary.txt");
@@ -76,9 +77,9 @@ public class BoggleGame {
     }
 
     /**
-     *
-     * @param player1
-     * @param player2
+     * Check the winner of the game given the two players
+     * @param player1 the first player
+     * @param player2 the second player
      * @return 1 if player 1 wins
      *         2 if player 2 wins
      *         -1 if there is no winner yet
@@ -95,6 +96,7 @@ public class BoggleGame {
             return -1;
         }
     }
+
     /**
      * Binary search dictionary for the given string
      * @param target the string to search for
@@ -136,6 +138,7 @@ public class BoggleGame {
     public static boolean verifyWord_Board(char[][] board, String target) {
 
     }
+<<<<<<< Updated upstream
 
     /**
      * Searching in board for word
@@ -148,9 +151,53 @@ public class BoggleGame {
      */
     public static boolean searchPaths(String target, int i, int j, int index, boolean[][] visited){
         if (index == target.length()){
+=======
+>>>>>>> Stashed changes
 
+    /**
+     * Searching in board for word
+     * @param target
+     * @param row
+     * @param col
+     * @param index
+     * @param visited
+     * @return true if there is a path
+     */
+    public static boolean searchPaths(String target, int row, int col, int index, boolean[][] visited) {
+        if (index == target.length()) {
+            return false;
+        }
+
+        int[][] neighbours = getNeighbours(row, col);
+        for (int[] neighbour : neighbours) {
+            if (!visited[neighbour[0]][neighbour[1]]) {
+                visited[row][col] = true;
+                if (target.indexOf(row) == target.length() - 1) return true;
+
+                return searchPaths(target, row, col, index + 1, visited)
+            }
         }
     }
+
+    public static int[][] getNeighbours(int row, int col) {
+        int[][] neighbours = new int[8][2];
+
+        if (col+1 < 5) neighbours[0] = new int[] {row, col+1}; // up
+        if (col-1 > -1) neighbours[1] = new int[] {row, col-1}; // down
+        if (row-1 > -1) {
+            neighbours[2] = new int[] {row-1, col}; // left
+            if (col+1 < 5) neighbours[5] = new int[] {row-1, col+1}; // up & left
+            if (col-1 > -1) neighbours[7] = new int[] {row-1, col-1}; // down & left
+        }
+        if (row+1 < 5) {
+            neighbours[3] = new int[] {row+1, col}; // right
+            if (col+1 < 5) neighbours[4] = new int[] {row+1, col+1}; // up & right
+            if (col-1 > -1) neighbours[6] = new int[] {row+1, col-1}; // down & right
+        }
+
+        return neighbours;
+    }
+
 
     /**
      * Reset variable values for new games
