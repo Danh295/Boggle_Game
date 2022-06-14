@@ -25,7 +25,7 @@ public class Computer extends Player {
         this.difficulty = difficulty;
     }
 
-    public String getID() {return ("computer" + difficulty + ": " + name); }
+    public String getID() { return ("computer" + difficulty + ": " + name); }
 
     /**
      * Returns all valid words currently on the board
