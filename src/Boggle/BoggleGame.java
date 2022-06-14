@@ -136,7 +136,16 @@ public class BoggleGame {
     public static boolean verifyWord_Board(char[][] board, String target) {
 
     }
-    //Searching in board for word
+
+    /**
+     * Searching in board for word
+     * @param target
+     * @param i
+     * @param j
+     * @param index
+     * @param visited
+     * @return
+     */
     public static boolean searchPaths(String target, int i, int j, int index, boolean[][] visited){
         if (index == target.length()){
 
