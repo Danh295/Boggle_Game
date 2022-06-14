@@ -12,6 +12,8 @@ import java.util.Scanner;
 public class BoggleGame {
     public static int targetScore;
     public static ArrayList<String> dictionary = new ArrayList<>();
+    public static int maxWordLength;
+    public static char[][] board = new char[5][5];
     public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'},
                                                     {'A','A','E','E','E','E'},
                                                     {'A','A','F','I','R','S'},
@@ -37,7 +39,6 @@ public class BoggleGame {
                                                     {'H','I','P','R','R','Y'},
                                                     {'N','O','O','T','U','W'},
                                                     {'O','O','O','T','T','U'}  };
-    public static int maxWordLength;
 
     public static void main(String[] args) throws IOException {
         File dict = new File("dictionary.txt");
@@ -51,12 +52,10 @@ public class BoggleGame {
     }
 
     /**
-     * Generates the game board and stores generated data into a 2d char array
-     * @return 2d char array containing game board information
+     * Generates the game board and stores generated data into the global board 2d array
      */
-    public static char[][] generateBoard() {
+    public static void generateBoard() {
         boolean[] visited = new boolean[25];
-        char[][] board = new char[5][5];
         Random rand = new Random();
         int i = 0;
         int j = 0;
@@ -73,7 +72,6 @@ public class BoggleGame {
             j=0;
             i++;
         }
-        return board;
     }
 
     /**
@@ -136,64 +134,80 @@ public class BoggleGame {
     }
 
     public static boolean verifyWord_Board(char[][] board, String target) {
-
+        boolean[][] visited = new boolean[5][5];
+        for (int row = 0; row < 5; row ++) {
+            for (int col = 0; col < 5; col++) {
+                if (board[row][col] == target.charAt(0)) {
+                    return searchWord(target, row, col, 1, visited);
+                }
+            }
+        }
+        return false;
     }
-<<<<<<< Updated upstream
 
     /**
-     * Searching in board for word
-     * @param target
-     * @param i
-     * @param j
-     * @param index
-     * @param visited
-     * @return
-     */
-    public static boolean searchPaths(String target, int i, int j, int index, boolean[][] visited){
-        if (index == target.length()){
-=======
->>>>>>> Stashed changes
-
-    /**
-     * Searching in board for word
-     * @param target
-     * @param row
-     * @param col
-     * @param index
-     * @param visited
+     * Recursively traverses the game board in search for a word
+     * @param target the target string to search for
+     * @param row the row number of the current letter on the board
+     * @param col the column number of the current letter on the board
+     * @param index the current index position of the character in the word
+     * @param visited array to mark already visited coordinates
      * @return true if there is a path
      */
-    public static boolean searchPaths(String target, int row, int col, int index, boolean[][] visited) {
+    public static boolean searchWord(String target, int row, int col, int index, boolean[][] visited) {
         if (index == target.length()) {
             return false;
         }
 
         int[][] neighbours = getNeighbours(row, col);
         for (int[] neighbour : neighbours) {
-            if (!visited[neighbour[0]][neighbour[1]]) {
-                visited[row][col] = true;
-                if (target.indexOf(row) == target.length() - 1) return true;
+            if (neighbour[0] != -1 && !visited[neighbour[0]][neighbour[1]]) {
+                visited[neighbour[0]][neighbour[1]] = true;
+                if (index == target.length()-1 && target.charAt(index) == board[neighbour[0]][neighbour[1]])
+                    return true;
 
-                return searchPaths(target, row, col, index + 1, visited)
+                return searchWord(target, row, col, index + 1, visited);
             }
         }
+        return false;
     }
 
+    /**
+     * Helper method that returns coordinates of all neighbouring cells if they're valid, returning -1 otherwise
+     * @param row number of rows
+     * @param col number of columns
+     * @return 2d array containing a collection of coordinates
+     */
     public static int[][] getNeighbours(int row, int col) {
         int[][] neighbours = new int[8][2];
 
         if (col+1 < 5) neighbours[0] = new int[] {row, col+1}; // up
+        else neighbours[0][0] = -1;
+
         if (col-1 > -1) neighbours[1] = new int[] {row, col-1}; // down
+        else neighbours[1][0] = -1;
+
         if (row-1 > -1) {
             neighbours[2] = new int[] {row-1, col}; // left
+
             if (col+1 < 5) neighbours[5] = new int[] {row-1, col+1}; // up & left
+            else neighbours[5][0] = -1;
+
             if (col-1 > -1) neighbours[7] = new int[] {row-1, col-1}; // down & left
-        }
+            else neighbours[7][0] = -1;
+
+        } else neighbours[2][0] = -1;
+
         if (row+1 < 5) {
             neighbours[3] = new int[] {row+1, col}; // right
+
             if (col+1 < 5) neighbours[4] = new int[] {row+1, col+1}; // up & right
+            else neighbours[4][0] = -1;
+
             if (col-1 > -1) neighbours[6] = new int[] {row+1, col-1}; // down & right
-        }
+            else neighbours[6][0] = -1;
+
+        } else neighbours[3][0] = -1;
 
         return neighbours;
     }
