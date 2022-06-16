@@ -29,15 +29,14 @@ public class Computer extends Player {
 
     /**
      * Returns all valid words currently on the board
-     * @param board char 2d array of the game board
      * @param dictionary string array of the words in the dictionary
      */
-    public void getWords (char[][] board, String[] dictionary) {
+    public void getWords (String[] dictionary) {
         /* todo: optimize this algorithm (currently linear and too slow)
          *  search each node on board, and compare each added letter to possible words in the dictionary
          */
         for (String word : dictionary) {
-            if (verifyWord_Board(board, word)) { // todo: implement verifyWord_Board method
+            if (verifyWord_Board(word)) { // todo: implement verifyWord_Board method
                 possibleWords.add(word);
             }
         }
