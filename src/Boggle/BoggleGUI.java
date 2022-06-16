@@ -16,7 +16,7 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
     JPanel scores;  //  Panels within the panels within the panels
     JButton start, pause, restart, exit;
     JButton single, multi;
-    JLabel p1, p2, title, instructions; //change
+    JLabel p1, p2, title, instructions;
     JTextField principleValue, minChar;
 
 
