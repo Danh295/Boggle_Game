@@ -106,10 +106,16 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
              * instead of needing to create a new one everywhere you can just
              * call it from the class
              */
+            BoggleGame.generateBoard();
             for(int i = 0; i<5; i++) {
                 for(int j = 0; j<5; j++) {
                     grid[i][j].setText(String.valueOf(board[i][j]));
                 }
+            }
+        }
+        else if(command.equals("Submit Word")) {
+            if(BoggleGame.verifyWord_Board("Start")&&BoggleGame.verifyWord_Dict("Start", 0, 109583)) {
+
             }
         }
     }
