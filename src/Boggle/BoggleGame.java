@@ -1,10 +1,7 @@
 package Boggle;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
 /**
  * Main class to the Boggle game, will contain global variables for the whole project as well as utility methods
@@ -40,16 +37,6 @@ public class BoggleGame {
                                                     {'N','O','O','T','U','W'},
                                                     {'O','O','O','T','T','U'}  };
 
-    public static void main(String[] args) throws IOException {
-        File dict = new File("dictionary.txt");
-        Scanner dictReader = new Scanner(dict);
-        while (dictReader.hasNext()) {
-            dictionary.add(dictReader.next());
-
-        }
-
-        BoggleGUI myFrame = new BoggleGUI();
-    }
 
     /**
      * Generates the game board and stores generated data into the global board 2d array
@@ -133,7 +120,13 @@ public class BoggleGame {
         return false;
     }
 
-    public static boolean verifyWord_Board(char[][] board, String target) {
+    /**
+     * Checks whether the current game board contains the given string
+     * @param target the target string to search for
+     * @return true: if the target can be found in the board
+     *         false: if the target cannot be found in the board
+     */
+    public static boolean verifyWord_Board(String target) {
         boolean[][] visited = new boolean[5][5];
         for (int row = 0; row < 5; row ++) {
             for (int col = 0; col < 5; col++) {
@@ -152,7 +145,7 @@ public class BoggleGame {
      * @param col the column number of the current letter on the board
      * @param index the current index position of the character in the word
      * @param visited array to mark already visited coordinates
-     * @return true if there is a path
+     * @return true: if there is a path
      */
     public static boolean searchWord(String target, int row, int col, int index, boolean[][] visited) {
         if (index == target.length()) {
