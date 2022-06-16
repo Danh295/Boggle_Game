@@ -11,6 +11,14 @@ public class BoggleGame {
     public static ArrayList<String> dictionary = new ArrayList<>();
     public static int maxWordLength;
     public static char[][] board = new char[5][5];
+    //for multiplayer
+    private int player1Score;
+    private int player2Score;
+    private int player1PassCounter;
+    private int player2PassCounter;
+    private boolean gameEnd;
+    private int currentTurn;
+
     public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'},
                                                     {'A','A','E','E','E','E'},
                                                     {'A','A','F','I','R','S'},
@@ -203,6 +211,33 @@ public class BoggleGame {
         } else neighbours[3][0] = -1;
 
         return neighbours;
+    }
+    /**
+     * switches player turns
+     * @param playersTurn the current players turn
+     */
+    public void switchTurns(int playersTurn){
+        try{
+            //stop the timer
+        }catch(Exception ex){
+        }
+        if(playersTurn == 1){
+            //change features
+            //start the timer for the other players turn
+        }else if(playersTurn == 2){
+            //change features
+            //start the timer for the other players turn
+        }
+    }
+    /**
+     * Shake up the board
+     */
+    public void shakeTheBoard(){//randomize the word again
+    generateBoard();
+    }
+    public int firstTurnDecider(){//decides who goes first
+        int randomNumber = (int) (Math.random() * 2 + 1);
+        return randomNumber;
     }
 
 
