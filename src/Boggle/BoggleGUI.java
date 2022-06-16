@@ -3,8 +3,12 @@ package Boggle;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.*;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static Boggle.BoggleGame.board;
+import static Boggle.BoggleGame.generateBoard;
 
 public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking about inheriting from BoggleGame class, will have to reimplement GUI frame if so
                                                                  // it would make sense if we have a new game object each time, instead of resetting everything each time
@@ -16,10 +20,17 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
     JPanel scores;  //  Panels within the panels within the panels
     JButton start, pause, restart, exit;
     JButton single, multi;
+    JComboBox difficulty;
     JLabel p1, p2, title, instructions;
     JTextField principleValue, minChar;
+    JLabel timer;
+    int counter;
+    TimerTask task;
 
-
+    boolean isTwoPlayers;
+    boolean doesP1Start;
+    boolean isTimerRunning;
+    Random rand = new Random();
     public BoggleGUI() {
 
         setSize(600, 600);
@@ -29,6 +40,11 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
         upper = new JPanel(new FlowLayout());
         instructions = new JLabel("Welcome to Boggle! The goal of the game is to find more and longer words than the other player!");
         upper.add(instructions);
+
+        // Timer
+
+
+
 
         middle = new JPanel(new FlowLayout());
 
@@ -43,7 +59,6 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
         exit = new JButton("Exit");
         buttons.add(exit);
         middle.add(buttons);
-
         // Text fields for user inputs that set the parameters of the game
         principleValue = new JTextField("Target Score");
         middle.add(principleValue);
@@ -56,7 +71,12 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
         mode.add(single);
         multi = new JButton("Multiplayer");
         mode.add(multi);
+        // Dropdown menu
+        String[] choices = {"Easy", "Medium", "Hard"};
+        JComboBox difficulty = new JComboBox(choices);
 
+        mode.add(difficulty);
+        middle.add(mode);
 
         // JPanel to make the scoreboard
         JPanel scoreBoard = new JPanel();   // JPanel for keeping score chart
@@ -106,10 +126,65 @@ public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking 
              * instead of needing to create a new one everywhere you can just
              * call it from the class
              */
+            generateBoard();
             for(int i = 0; i<5; i++) {
                 for(int j = 0; j<5; j++) {
                     grid[i][j].setText(String.valueOf(board[i][j]));
                 }
+            }
+        }
+        else if(command.equals("Multiplayer")) {
+            isTwoPlayers = true;
+            remove(multi);
+            remove(single);
+            doesP1Start = true;
+        }
+        else if(command.equals("Single Player")) {
+            isTwoPlayers = false;
+            remove(multi);
+            remove(single);
+            doesP1Start = rand.nextBoolean();
+        }
+        /**
+         *
+         * Once word is submitted, check to see if it's valid in the board and in the dictionary,
+         * then tally points and check if there's a winner
+         */
+        else if(command.equals("Submit Word")) {
+            int isThereAWinner = 5;
+            if (BoggleGame.verifyWord_Board("Start") && BoggleGame.verifyWord_Dict("Start", 0, 109583)) {
+                if(isTwoPlayers) {
+                    if(doesP1Start) {
+                        //player1.tallyPoints(start);
+                    }
+                    else {
+                        //player2.tallyPoints(start);
+                    }
+                    //isThereAWinner = BoggleGame.isWinner(player1, player2)
+
+                }
+                else {
+                    if (doesP1Start) {
+                        //player1.tallyPoints(start);
+                    } else {
+                        //computer.tallyPoints(start);
+                    }
+                    //isThereAWinner = BoggleGame.isWinner(player1, computer)
+                }
+                if(isThereAWinner == 1) {
+                    //Player 1 Wins
+                    System.out.println("Player 1 Wins");
+                }
+                else if(isThereAWinner == 2) {
+                    if(isTwoPlayers) System.out.println("Player 2 wins. ");
+                    else System.out.println("Computer wins. ");
+                }
+            }
+        }
+        else if(command.equals("Pause")) {
+            isTimerRunning = false;
+            while(!isTimerRunning) {
+                //pause timer
             }
         }
     }
