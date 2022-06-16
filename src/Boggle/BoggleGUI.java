@@ -6,7 +6,9 @@ import java.awt.event.*;
 
 import static Boggle.BoggleGame.board;
 
-public class BoggleGUI extends JFrame implements ActionListener{
+public class BoggleGUI extends JFrame implements ActionListener{ // D: thinking about inheriting from BoggleGame class, will have to reimplement GUI frame if so
+                                                                 // it would make sense if we have a new game object each time, instead of resetting everything each time
+                                                                 // if we do end up creating a new game object each time, it would make sense for the board to be an instance variable, so this class must then extend the game class
 
     JLabel[][] grid;
     JPanel upper, middle, lower;    //  3 main panels
@@ -99,7 +101,7 @@ public class BoggleGUI extends JFrame implements ActionListener{
 
         if(command.equals("shake up board")) {
 //            char[][] characterGrid = generateBoard();
-            /* this is danny, i changed the generateBoard method into a void
+            /* D: i changed the generateBoard method into a void
              * method and just made the game board into a global variable. so
              * instead of needing to create a new one everywhere you can just
              * call it from the class
