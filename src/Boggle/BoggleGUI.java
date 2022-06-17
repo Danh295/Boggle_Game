@@ -23,7 +23,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     JComboBox difficulty;
     JLabel p1, p2, title, instructions;
     JTextField principleValue, minChar;
-    JLabel timer;
+    JLabel countdown;
     int counter;
     TimerTask task;
 
@@ -43,8 +43,23 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         upper.add(instructions);
 
         // Timer
+        counter = 15;
+        countdown = new JLabel("Time remaining: " + String.valueOf(counter) + "s");
+        upper.add(countdown);
 
+        Timer timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                if (counter > 0) {
+                    counter--;
+                    countdown.setText("Time remaining: " + String.valueOf(counter) + "s");
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 1000);
 
+        //Middle Panel
         middle = new JPanel(new FlowLayout());
 
         // A panel within the middle panel for buttons asking if you want to start, exit, etc.
