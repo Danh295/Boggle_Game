@@ -188,14 +188,11 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         } else if (command.equals("Pause")) {
             isTimerRunning = false;
             while (!isTimerRunning) {
-                //pause timer
+                Timer t2 = new Timer(counter, );
             }
 
-        } else if (command.equals("Submit Word")) {
-                    if (BoggleGame.verifyWord_Board("Start") && BoggleGame.verifyWord_Dict("Start", 0, 109583)) {
-                    }
-                }
-            }
+        } else if (command.equals("Resume")) {
+            isTimerRunning = true;
         }
     }
 }
