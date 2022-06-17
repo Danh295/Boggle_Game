@@ -22,14 +22,17 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     JButton single, multi;
     JComboBox difficulty;
     JLabel p1, p2, title, instructions;
-    JTextField principleValue, minChar;
+    JTextField principleValue, minChar, word;
     JLabel countdown;
     int counter;
     TimerTask task;
-
+    Human player1;
+    Human player2;
+    Computer comp;
     boolean isTwoPlayers;
     boolean doesP1Start;
     boolean isTimerRunning;
+    int difficultyLevel = 0;
     Random rand = new Random();
 
     public BoggleGUI() {
@@ -51,7 +54,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         task = new TimerTask() {
             @Override
             public void run() {
-                if (counter > 0) {
+                if (counter > 0&&isTimerRunning) {
                     counter--;
                     countdown.setText("Time remaining: " + String.valueOf(counter) + "s");
                 }
@@ -73,6 +76,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         exit = new JButton("Exit");
         buttons.add(exit);
         middle.add(buttons);
+
         // Text fields for user inputs that set the parameters of the game
         principleValue = new JTextField("Target Score");
         middle.add(principleValue);
@@ -85,6 +89,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         mode.add(single);
         multi = new JButton("Multiplayer");
         mode.add(multi);
+
         // Dropdown menu
         String[] choices = {"Easy", "Medium", "Hard"};
         JComboBox difficulty = new JComboBox(choices);
@@ -106,6 +111,10 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         scoreBoard.add(scores);
 
         middle.add(scoreBoard);
+
+        // Word Textfield
+        word = new JTextField("Input word");
+        middle.add(word);
         add(middle);
 
 
@@ -134,24 +143,24 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         String command = event.getActionCommand();
 
         if (command.equals("shake up board")) {
-//            char[][] characterGrid = generateBoard();
-            /* D: i changed the generateBoard method into a void
-             * method and just made the game board into a global variable. so
-             * instead of needing to create a new one everywhere you can just
-             * call it from the class
-             */
-
             BoggleGame.generateBoard();
+            /** THe next two functions determine if the user is playing with 1 or 2 players
+             * And creates the two players accordingly
+             */
         } else if (command.equals("Multiplayer")) {
             isTwoPlayers = true;
             remove(multi);
             remove(single);
             doesP1Start = true;
+            Human player1 = new Human("Player 1", 0);
+            comp = new Computer("Computer", 0, difficultyLevel);
         } else if (command.equals("Single Player")) {
             isTwoPlayers = false;
             remove(multi);
             remove(single);
             doesP1Start = rand.nextBoolean();
+            player1 = new Human("Player 1", 0);
+            player2 = new Human("Player 2", 0);
         }
         /**
          *
@@ -160,23 +169,24 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
          */
         else if (command.equals("Submit Word")) {
             int isThereAWinner = 5;
-            if (BoggleGame.verifyWord_Board("Start") && BoggleGame.verifyWord_Dict("Start", 0, 109583)) {
+            if (BoggleGame.verifyWord_Board(word.getText()) && BoggleGame.verifyWord_Dict(word.getText(), 0, 109583)) {
                 if (isTwoPlayers) {
                     if (doesP1Start) {
-                        //player1.tallyPoints(start);
+                        player1.addScore(word.getText());
                     } else {
                         //player2.tallyPoints(start);
                     }
-                    //isThereAWinner = BoggleGame.isWinner(player1, player2)
+                    isThereAWinner = BoggleGame.isWinner(player1, player2);
 
                 } else {
                     if (doesP1Start) {
-                        //player1.tallyPoints(start);
+                        player1.addScore(word.getText());
                     } else {
-                        //computer.tallyPoints(start);
+                        comp.addScore(word.getText());
                     }
-                    //isThereAWinner = BoggleGame.isWinner(player1, computer)
+                    isThereAWinner = BoggleGame.isWinner(player1, comp);
                 }
+                doesP1Start= !doesP1Start;
                 if (isThereAWinner == 1) {
                     //Player 1 Wins
                     System.out.println("Player 1 Wins");
@@ -187,11 +197,18 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             }
         } else if (command.equals("Pause")) {
             isTimerRunning = false;
-            while (!isTimerRunning) {
-                //Timer t2 = new Timer(counter);
-            }
         } else if (command.equals("Resume")) {
             isTimerRunning = true;
+        } else if(command.equals("Reset")) {
+            BoggleGame.generateBoard();
+            player1.setScore(0);
+            player2.setScore(0);
+        } else if(command.equals("Easy")) {
+            difficultyLevel = 1;
+        } else if(command.equals("Medium")) {
+            difficultyLevel = 2;
+        } else if(command.equals("Hard")) {
+            difficultyLevel = 3;
         }
     }
 }
