@@ -56,8 +56,8 @@ public class BoggleGame {
         int j = 0;
         while(i<5) {
             while(j<5) {
-                int x = rand.nextInt(24);
-                int y = rand.nextInt(5);
+                int x = rand.nextInt(25);
+                int y = rand.nextInt(6);
                 if(!visited[x]) {
                     visited[x] = true;
                     board[i][j] = letterPossibilities[x][y];
