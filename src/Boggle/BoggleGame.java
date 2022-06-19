@@ -245,6 +245,7 @@ public class BoggleGame {
      * Reset variable values for new games
      */
     public static void reset() {
+
         /*
         delete player instances
         targetScore
