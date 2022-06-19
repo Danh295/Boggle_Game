@@ -233,7 +233,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         readPlayerNumber = new JButton("Submit Mode");
         readPlayerNumber.addActionListener(this);
         mode.add(readPlayerNumber);
-        difficulty = new JComboBox(new String[]{"Easy, Medium, Hard"});
+        difficulty = new JComboBox(new String[]{"Easy", "Medium", "Hard"});
         //mode.add(difficulty);
 
         middleC2.gridx = 0;
@@ -448,9 +448,18 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
 
         } else if (command.equals("Pause")) {
             isTimerRunning = false;
+            wordPrompt.remove(word);
+            wordPrompt.remove(ok);
+            //wordPrompt.hide();
+            wordPrompt.paintImmediately(0,0,wordPrompt.getWidth(), wordPrompt.getHeight());
+            wordPrompt.revalidate();
         } else if (command.equals("Resume")) {
             isTimerRunning = true;
-        } else if(command.equals("Reset")) {
+            wordPrompt.add(word);
+            wordPrompt.add(ok);
+            wordPrompt.paintImmediately(0,0,wordPrompt.getWidth(), wordPrompt.getHeight());
+            wordPrompt.revalidate();
+        } else if(command.equals("Restart")) {
             BoggleGame.generateBoard();
             player1.setScore(0);
             player2.setScore(0);
