@@ -2,6 +2,7 @@ package Boggle;
 
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.event.*;
 import java.util.*;
 import java.util.Timer;
@@ -14,13 +15,12 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     // if we do end up creating a new game object each time, it would make sense for the board to be an instance variable, so this class must then extend the game class
 
     JLabel[][] grid;
-    JPanel upper, middle, lower;    //  3 main panels
-    JPanel buttons, scoreBoard, mode;     //  Panels within panels
+    JPanel upper, middle, lower, wordPrompt;    //  3 main panels
+    JPanel buttons, scoreBoard, mode, textFields;     //  Panels within panels
     JPanel scores;  //  Panels within the panels within the panels
-    JButton start, pause, restart, exit, submit;
-    JComboBox difficulty;
-    JComboBox numberOfPlayers;
-    JLabel p1, p2, title, instructions, instructions2;
+    JButton start, pause, restart, exit, ok;
+    JComboBox numberOfPlayers, difficulty;
+    JLabel p1, p2, title, instructions, instructions2, wordLabel;
     JTextField principleValue, minChar, word;
     JLabel countdown;
     int counter;
@@ -35,7 +35,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     Random rand = new Random();
 
     public BoggleGUI() {
-
+        /*  // What Kaiden did
         setSize(600, 600);
         setName("BOGGLE!");
         setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
@@ -92,6 +92,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         mode.add(multi);
         multi.addActionListener(this);
         */
+        /*
         String[] options = new String[]{"Single Player", "Multiplayer"};
         numberOfPlayers = new JComboBox(options);
         // Dropdown menu
@@ -125,7 +126,194 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
 
         submit = new JButton("Submit Word");
         submit.addActionListener(this);
+        */
 
+        setSize(1100, 670);
+        setName("BOGGLE!");
+        setLayout(new GridBagLayout());
+
+        GridBagConstraints frameC = new GridBagConstraints();
+
+        upper = new JPanel();
+        upper.setLayout(new GridLayout(3, 1));
+        instructions = new JLabel("Welcome to Boggle! The goal of the game is to find more and longer words than the other player!");
+        instructions2 = new JLabel("Please select difficulty level, number of players, and your target score. ");
+        upper.add(instructions);
+        upper.add(instructions2);
+
+        // Timer
+        counter = 15;
+        countdown = new JLabel("Time remaining for turn: " + String.valueOf(counter) + "s");
+        upper.add(countdown);
+
+        Timer timer = new Timer();
+        task = new TimerTask() {
+            @Override
+            public void run() {
+                if (counter > 0&&isTimerRunning) {
+                    counter--;
+                    countdown.setText("Time remaining for turn: " + String.valueOf(counter) + "s");
+                }
+            }
+        };
+        timer.scheduleAtFixedRate(task, 0, 1000);
+
+        frameC.ipady = 150;
+        frameC.ipadx = 400;
+        frameC.gridwidth = 2;
+        frameC.gridx = 0;
+        frameC.gridy = 0;
+        add(upper, frameC);
+
+        // Word Entering Place
+        wordPrompt = new JPanel(new FlowLayout());
+        GridBagConstraints frameC1 = new GridBagConstraints();
+
+        wordLabel = new JLabel("Your word: ");
+        wordPrompt.add(wordLabel);
+        word = new JTextField("Enter word");
+        wordPrompt.add(word);
+        ok = new JButton("OK");
+        wordPrompt.add(ok);
+        ok.addActionListener(this);
+
+        frameC1.gridx = 1;
+        frameC1.gridy = 1;
+        frameC1.ipady = 20;
+        frameC1.ipadx = 250;
+        add(wordPrompt, frameC1);
+
+        //  Middle Panel
+        middle = new JPanel();
+        GridBagConstraints frameC2 = new GridBagConstraints();  // Constraints for Frame
+
+        middle.setLayout(new GridBagLayout());
+        GridBagConstraints middleC = new GridBagConstraints();  // Constraints for Panel
+
+        // JPanel to make the scoreboard
+        scoreBoard = new JPanel(new GridBagLayout());   // JPanel for keeping score chart
+        GridBagConstraints c3 = new GridBagConstraints();
+
+        title = new JLabel("Score Board");
+        c3.gridwidth = 2;
+        c3.ipady = 10;
+        c3.gridx = 0;
+        c3.gridy = 0;
+        scoreBoard.add(title, c3);
+
+        GridBagConstraints c3version2 = new GridBagConstraints();
+        scores = new JPanel(new FlowLayout());
+
+        Border border = BorderFactory.createLineBorder(Color.BLACK);
+
+        p1 = new JLabel(" Player 1: " + 0 + " ");
+        p1.setBorder(border);
+        scores.add(p1);
+
+        p2 = new JLabel(" Player 2: " + 0 + " ");
+        p2.setBorder(border);
+        scores.add(p2);
+
+        c3version2.gridx = 0;
+        c3version2.gridy = 1;
+        c3version2.ipady = 15;
+        scoreBoard.add(scores, c3version2);
+
+        middleC.gridx = 0;
+        middleC.gridy = 0;
+        middle.add(scoreBoard, middleC);
+
+        //  Single or Multiplayer Mode
+        mode = new JPanel(new FlowLayout());
+        GridBagConstraints middleC2 = new GridBagConstraints();
+        String[] choice = {"Single player", "Multiplayer"};
+        numberOfPlayers = new JComboBox(choice);
+        mode.add(numberOfPlayers);
+        String[] choices = {"Easy", "Medium", "Hard"};
+        difficulty = new JComboBox(choices);
+        mode.add(difficulty);
+
+        middleC2.gridx = 0;
+        middleC2.gridy = 1;
+        middleC2.ipady = 15;
+        middle.add(mode, middleC2);
+
+        // Text fields for user inputs that set the parameters of the game
+        textFields = new JPanel(new FlowLayout());
+        GridBagConstraints middleC3 = new GridBagConstraints();
+
+        principleValue = new JTextField("Target Score");
+        textFields.add(principleValue);
+        minChar = new JTextField("Shortest word allowed");
+        textFields.add(minChar);
+
+        middleC3.gridx = 0;
+        middleC3.gridy = 2;
+        middleC2.ipady = 15;
+        middle.add(textFields, middleC3);
+
+        // A panel within the middle panel for buttons asking if you want to start, exit, etc.
+        buttons = new JPanel(new GridLayout(2, 2));
+
+        GridBagConstraints middleC4 = new GridBagConstraints();
+
+        start = new JButton("Start");
+        start.addActionListener(this);
+        buttons.add(start);
+        pause = new JButton("Pause");
+        pause.addActionListener(this);
+        buttons.add(pause);
+        restart = new JButton("Restart");
+        restart.addActionListener(this);
+        buttons.add(restart);
+        exit = new JButton("Exit");
+        exit.addActionListener(this);
+        buttons.add(exit);
+
+        middleC4.gridx = 0;
+        middleC4.gridy = 3;
+        middleC4.ipady = 30;
+        middle.add(buttons, middleC4);
+
+        frameC2.ipady = 450;
+        frameC2.ipadx = 300;
+        frameC2.gridwidth = 1;
+        frameC2.weighty = 0.5;
+        frameC2.gridx = 0;
+        frameC2.gridy = 2;
+        add(middle, frameC2);
+
+        // Panel to contain the actual grid
+        GridBagConstraints frameC3 = new GridBagConstraints();
+
+        lower = new JPanel(new GridLayout(5,5));
+        generateBoard();
+        grid = new JLabel[5][5];
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                grid[i][j] = new JLabel("Test");
+                grid[i][j].setText("" + board[i][j]);
+            }
+        }
+
+        for (JLabel[] labels : grid) {
+            for (JLabel label : labels) {
+                lower.add(label);
+            }
+        }
+
+        frameC3.ipady = 350;
+        frameC3.ipadx = 300;
+        frameC3.gridwidth = 1;
+        frameC3.weighty = 0.5;
+        frameC3.gridx = 1;
+        frameC3.gridy = 2;
+        add(lower, frameC3);
+
+        setVisible(true);
+
+
+        /*  // What Kaiden did
         // Panel to contain the actual grid
         lower = new JPanel(new GridLayout(5, 5));
         generateBoard();
@@ -145,7 +333,9 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         //add(lower);
 
         setVisible(true);
+         */
     }
+
     public static void main(String[] args) {
         BoggleGUI game = new BoggleGUI();
     }
@@ -184,7 +374,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         start.setText("Resume");
         middle.remove(principleValue);
         middle.add(word);
-        middle.add(submit);
+        middle.add(ok);
         isTimerRunning = true;
         middle.add(scoreBoard);
         upper.add(countdown);
