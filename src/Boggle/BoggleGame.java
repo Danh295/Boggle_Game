@@ -19,7 +19,8 @@ public class BoggleGame extends BoggleGUI{
     private int player2PassCounter;
     private boolean gameEnd;
     private int currentTurn;
-
+    private static ArrayList<String> usedWords = new ArrayList<>();
+    private static ArrayList<String> possibleWords = new ArrayList<>();
     public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'},
                                                     {'A','A','E','E','E','E'},
                                                     {'A','A','F','I','R','S'},
@@ -94,11 +95,12 @@ public class BoggleGame extends BoggleGUI{
     /**
      * Binary search dictionary for the given string
      * @param target the string to search for
-     * @param lower lower bound of the search
-     * @param upper upper bound of the search
+     * @param //lower bound of the search
+     * @param //upper bound of the search
      * @return true: if the string is found
      *         false: if the string is not found
      */
+
     public static boolean verifyWord_Dict(String target, int lower, int upper) {
         if (lower <= upper) { // if there are more elements to check, that are still in range
             target = target.toLowerCase();
@@ -130,21 +132,25 @@ public class BoggleGame extends BoggleGUI{
 
     /**
      * Checks whether the current game board contains the given string
+     *
      * @param target the target string to search for
      * @return true: if the target can be found in the board
-     *         false: if the target cannot be found in the board
+     * false: if the target cannot be found in the board
      */
     public static boolean verifyWord_Board(String target) {
+        target = target.toUpperCase();
         boolean[][] visited = new boolean[5][5];
         String word;
         char letter;
         for (int row = 0; row < 5; row ++) {
             for (int col = 0; col < 5; col++) {
+                System.out.println("ran: " + row + " " + col);
                 word = "";
                 letter = board[row][col];
 
                 word += letter;
                 if (letter == target.charAt(0)) {
+                    System.out.println(letter);
                     return searchWord(target, word, row, col, visited);
                 }
             }
@@ -169,10 +175,20 @@ public class BoggleGame extends BoggleGUI{
 
         for (int[] neighbour : getNeighbours(row, col)) {
             if (neighbour[0] != -1) { // if neighbour is valid
+                System.out.println("neighbour: " + board[neighbour[0]][neighbour[1]]);
 
                 if (!visited[neighbour[0]][neighbour[1]]) { // if neighbour is unvisited
+                    System.out.println("visiting: " + board[neighbour[0]][neighbour[1]]);
                     visited[neighbour[0]][neighbour[1]] = true;
                     word += board[neighbour[0]][neighbour[1]]; // add neighbouring letter to current word
+
+                    System.out.println("current word: " + word);
+                    if (!target.contains(word)) {
+                        System.out.println("unvisited: " + board[neighbour[0]][neighbour[1]]);
+                        visited[neighbour[0]][neighbour[1]] = false;
+                        word = word.substring(0, word.length() - 1);
+                        continue;
+                    }
 
                     if (word.equals(target)) return true; // if current word is equal to target
                     if (word.length() == target.length()) return false; // if current word is same length as target
@@ -187,43 +203,46 @@ public class BoggleGame extends BoggleGUI{
 
     /**
      * Helper method that returns coordinates of all neighbouring cells if they're valid, returning -1 otherwise
+     *
      * @param row number of rows
      * @param col number of columns
      * @return 2d array containing a collection of coordinates
+     * if there is no valid neighbour at a position surrounding the cell, -1 is placed into the x-value
      */
     public static int[][] getNeighbours(int row, int col) {
         int[][] neighbours = new int[8][2];
 
-        if (col+1 < 5) neighbours[0] = new int[] {row, col+1}; // up
+        if (col + 1 < 5) neighbours[0] = new int[]{row, col + 1}; // up
         else neighbours[0][0] = -1;
 
-        if (col-1 > -1) neighbours[1] = new int[] {row, col-1}; // down
+        if (col - 1 > -1) neighbours[1] = new int[]{row, col - 1}; // down
         else neighbours[1][0] = -1;
 
-        if (row-1 > -1) {
-            neighbours[2] = new int[] {row-1, col}; // left
+        if (row - 1 > -1) {
+            neighbours[2] = new int[]{row - 1, col}; // left
 
-            if (col+1 < 5) neighbours[5] = new int[] {row-1, col+1}; // up & left
+            if (col + 1 < 5) neighbours[5] = new int[]{row - 1, col + 1}; // up & left
             else neighbours[5][0] = -1;
 
-            if (col-1 > -1) neighbours[7] = new int[] {row-1, col-1}; // down & left
+            if (col - 1 > -1) neighbours[7] = new int[]{row - 1, col - 1}; // down & left
             else neighbours[7][0] = -1;
 
         } else neighbours[2][0] = -1;
 
-        if (row+1 < 5) {
-            neighbours[3] = new int[] {row+1, col}; // right
+        if (row + 1 < 5) {
+            neighbours[3] = new int[]{row + 1, col}; // right
 
-            if (col+1 < 5) neighbours[4] = new int[] {row+1, col+1}; // up & right
+            if (col + 1 < 5) neighbours[4] = new int[]{row + 1, col + 1}; // up & right
             else neighbours[4][0] = -1;
 
-            if (col-1 > -1) neighbours[6] = new int[] {row+1, col-1}; // down & right
+            if (col - 1 > -1) neighbours[6] = new int[]{row + 1, col - 1}; // down & right
             else neighbours[6][0] = -1;
 
         } else neighbours[3][0] = -1;
 
         return neighbours;
     }
+
     /**
      * switches player turns
      * @param playersTurn the current players turn
@@ -264,8 +283,10 @@ public class BoggleGame extends BoggleGUI{
     public static void reset() {
 
         BoggleGame.targetScore = 0;
-
-
+        BoggleGUI.player1 = null;
+        BoggleGUI.player2 = null;
+        // If we choose to do minimum characters
+        // BoggleGUI.minChar = 0;
         /*
         delete player instances
         targetScore

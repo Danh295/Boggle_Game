@@ -18,7 +18,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     JPanel upper, middle, lower, wordPrompt;    //  3 main panels
     JPanel buttons, scoreBoard, mode, textFields;     //  Panels within panels
     JPanel scores;  //  Panels within the panels within the panels
-    JButton start, pause, restart, exit, ok, readPlayerNumber;
+    JButton start, pause, restart, exit, ok, pass, shuffle, readPlayerNumber;
     JComboBox numberOfPlayers, difficulty;
     JLabel p1, p2, title, instructions, instructions2, wordLabel, targetScore;
     JTextField principleValue, word;
@@ -27,7 +27,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
     int counter;
     TimerTask task;
     Timer timer;
-    Human player1;
+    public Human player1;
     Human player2;
     Computer comp;
     boolean isTwoPlayers;
@@ -241,6 +241,10 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             }
             mode.remove(readPlayerNumber);
         }
+        if(counter == 0) {
+            doesP1Start = !doesP1Start;
+
+        }
         if (command.equals("Submit Difficulty")) {
             if (difficultyLevel.equals("Easy")) {
                 difficultyNumber = 1;
@@ -273,6 +277,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             upper.add(countdown);
             middle.remove(start);
             buttons.add(start);
+            targetScore.setText("Target Score: " + principleValue.getText());
             buttons.add(pause);
             buttons.add(exit);
             buttons.add(restart);
@@ -307,8 +312,8 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
              */
         } else if (command.equals("OK")) {
             int isThereAWinner = 5;
-            boolean b1 = BoggleGame.verifyWord_Board(word.getText());
-            boolean b2 = BoggleGame.verifyWord_Dict(word.getText(), 0, 109583);
+            boolean b1 = verifyWord_Board(word.getText());
+            boolean b2 = verifyWord_Dict(word.getText(), 0, 109583);
             if (BoggleGame.verifyWord_Board(word.getText()) && BoggleGame.verifyWord_Dict(word.getText(), 0, 109583)) {
                 if (isTwoPlayers) {
                     if (doesP1Start) {
@@ -335,7 +340,8 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
                     else System.out.println("Computer wins. ");
                 }
             }
-
+            word.setText("");
+            wordLabel.setText("Your Word: " + word.getText());
         } else if (command.equals("Pause")) {
             isTimerRunning = false;
             wordPrompt.remove(word);
@@ -354,6 +360,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             repaint();
             revalidate();
         } else if(command.equals("Restart")) {
+            reset();
             generateBoard();
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
