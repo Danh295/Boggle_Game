@@ -305,8 +305,10 @@ public class BoggleGUI extends JFrame implements ActionListener {
         }
         if (timerCounter == 0) {
             p1Turn = !p1Turn;
+            changeColour();
+        sysMessage.setText("Time's Up! Next player's turn. ");
         }
-        if(!p1Turn&&!isTwoPlayers) {
+        if(!p1Turn&&isTwoPlayers) {
             right.hide();
             left.hide();
             upper.hide();
