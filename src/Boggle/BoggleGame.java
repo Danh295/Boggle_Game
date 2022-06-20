@@ -8,19 +8,14 @@ import java.util.Timer;
  * Main class to the Boggle game, will contain global variables for the whole project as well as utility methods
  */
 public class BoggleGame extends BoggleGUI{
+
     public static int targetScore;
     public static ArrayList<String> dictionary = new ArrayList<>();
     public static int maxWordLength;
     public static char[][] board = new char[5][5];
-    //for multiplayer
-    private int player1Score;
-    private int player2Score;
-    private int player1PassCounter;
-    private int player2PassCounter;
+
     private boolean gameEnd;
     private int currentTurn;
-    private static ArrayList<String> usedWords = new ArrayList<>();
-    private static ArrayList<String> possibleWords = new ArrayList<>();
     public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'},
                                                     {'A','A','E','E','E','E'},
                                                     {'A','A','F','I','R','S'},
@@ -54,8 +49,12 @@ public class BoggleGame extends BoggleGUI{
     public static void generateBoard() {
         boolean[] visited = new boolean[25];
         Random rand = new Random();
+
+        /* counter variables */
         int i = 0;
         int j = 0;
+
+        /* iterate until valid values are generated */
         while(i<5) {
             while(j<5) {
                 int x = rand.nextInt(25);
@@ -80,7 +79,6 @@ public class BoggleGame extends BoggleGUI{
      *         -1 if there is no winner yet
      */
     public static int isWinner(Player player1, Player player2) {
-
         if (player1.getScore() > targetScore) {
             return 1;
         }
@@ -95,20 +93,20 @@ public class BoggleGame extends BoggleGUI{
     /**
      * Binary search dictionary for the given string
      * @param target the string to search for
-     * @param //lower bound of the search
-     * @param //upper bound of the search
+     * @param lower lower bound of the search
+     * @param upper upper bound of the search
      * @return true: if the string is found
      *         false: if the string is not found
      */
-
     public static boolean verifyWord_Dict(String target, int lower, int upper) {
         if (lower <= upper) { // if there are more elements to check, that are still in range
             target = target.toLowerCase();
+
             int mid = (upper - lower) / 2; // update middle index
             int charIndex = 0; // update character index used for comparisons
             boolean found = false;
-
             String currWord = dictionary.get(mid+lower);
+
             if (currWord.equals(target)) return true; // check if current word is the target
 
             // check if character index needs to be updated
@@ -123,9 +121,9 @@ public class BoggleGame extends BoggleGUI{
             }
 
             if (currWord.charAt(charIndex) > target.charAt(charIndex) || found) { // if word's character's ascii value is greater than the characters, or if word contains the target
-                return verifyWord_Dict(target, lower, mid - 1); // recursive call w/ updated upper bound
+                return verifyWord_Dict(target, lower, lower + mid - 1); // recursive call w/ updated upper bound
             }
-            return verifyWord_Dict(target, mid + 1, upper); // recursive call w/ updated lower bound
+            return verifyWord_Dict(target, lower + mid + 1, upper); // recursive call w/ updated lower bound
         }
         return false;
     }
@@ -139,16 +137,19 @@ public class BoggleGame extends BoggleGUI{
      */
     public static boolean verifyWord_Board(String target) {
         target = target.toUpperCase();
+
         boolean[][] visited = new boolean[5][5];
         String word;
         char letter;
+
+        /* linear iteration until current character matches with target's initial character */
         for (int row = 0; row < 5; row ++) {
             for (int col = 0; col < 5; col++) {
-                System.out.println("ran: " + row + " " + col);
+
                 word = "";
                 letter = board[row][col];
-
                 word += letter;
+
                 if (letter == target.charAt(0)) {
                     System.out.println(letter);
                     return searchWord(target, word, row, col, visited);
@@ -175,16 +176,12 @@ public class BoggleGame extends BoggleGUI{
 
         for (int[] neighbour : getNeighbours(row, col)) {
             if (neighbour[0] != -1) { // if neighbour is valid
-                System.out.println("neighbour: " + board[neighbour[0]][neighbour[1]]);
 
                 if (!visited[neighbour[0]][neighbour[1]]) { // if neighbour is unvisited
-                    System.out.println("visiting: " + board[neighbour[0]][neighbour[1]]);
                     visited[neighbour[0]][neighbour[1]] = true;
                     word += board[neighbour[0]][neighbour[1]]; // add neighbouring letter to current word
 
-                    System.out.println("current word: " + word);
                     if (!target.contains(word)) {
-                        System.out.println("unvisited: " + board[neighbour[0]][neighbour[1]]);
                         visited[neighbour[0]][neighbour[1]] = false;
                         word = word.substring(0, word.length() - 1);
                         continue;
@@ -203,7 +200,6 @@ public class BoggleGame extends BoggleGUI{
 
     /**
      * Helper method that returns coordinates of all neighbouring cells if they're valid, returning -1 otherwise
-     *
      * @param row number of rows
      * @param col number of columns
      * @return 2d array containing a collection of coordinates
@@ -244,54 +240,12 @@ public class BoggleGame extends BoggleGUI{
     }
 
     /**
-     * switches player turns
-     * @param playersTurn the current players turn
-     */
-    public void switchTurns(int playersTurn){
-        try{
-            //timer.stop();
-        }catch(Exception ex){
-        }
-        if(playersTurn == 1){
-            //change features
-            //startTimer
-        }else if(playersTurn == 2){
-            //change features
-            //startTimer
-        }
-    }
-    /**
-     * Shake up the board
-     */
-    public void shakeTheBoard(){//randomize the word again
-    generateBoard();
-    }
-
-    /**
-     * Decides who goes first
-     * @return randomNumber
-     */
-    public int firstTurnDecider(){//decides who goes first
-        int randomNumber = (int) (Math.random() * 2 + 1);
-        return randomNumber;
-    }
-
-
-    /**
      * Reset variable values for new games
      */
     public static void reset() {
-
-        BoggleGame.targetScore = 0;
-        BoggleGUI.player1 = null;
-        BoggleGUI.player2 = null;
+        player1 = null;
+        player2 = null;
         // If we choose to do minimum characters
         // BoggleGUI.minChar = 0;
-        /*
-        delete player instances
-        targetScore
-        minimum character amount
-
-        */
     }
 }

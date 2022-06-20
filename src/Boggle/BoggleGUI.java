@@ -11,96 +11,129 @@ import java.util.TimerTask;
 import static Boggle.BoggleGame.*;
 
 public class BoggleGUI extends JFrame implements ActionListener { // D: thinking about inheriting from BoggleGame class, will have to reimplement GUI frame if so
+
     // it would make sense if we have a new game object each time, instead of resetting everything each time
     // if we do end up creating a new game object each time, it would make sense for the board to be an instance variable, so this class must then extend the game class
+    JPanel upper, middle, lower, wordPrompt; //  3 main panels
+    JPanel buttons1, buttons2, scoreBoard, mode, textFields; //  Panels within panels
+    JPanel scores; //  Panels within the panels within the panels
+    GridBagConstraints frameC, frameC1, frameC2, frameC3, frameC4, middleC, middleC2, middleC3, middleC4, c3, c3version2; // Different constraints for each panel
 
+    JLabel title, instructions, wordLabel, targetScore, countdown;
+    JLabel p1, p2;
     JLabel[][] grid;
-    JPanel upper, middle, lower, wordPrompt;    //  3 main panels
-    JPanel buttons, scoreBoard, mode, textFields;     //  Panels within panels
-    JPanel scores;  //  Panels within the panels within the panels
-    JButton start, pause, restart, exit, ok, pass, shuffle, readPlayerNumber;
-    JComboBox numberOfPlayers, difficulty;
-    JLabel p1, p2, title, instructions, instructions2, wordLabel, targetScore;
     JTextField principleValue, word;
-    JLabel countdown;
-    GridBagConstraints frameC3, frameC2, middleC, frameC1, c3, frameC, middleC3, middleC2, middleC4;
-    int counter;
-    TimerTask task;
+    JButton start, pause, restart, exit, ok, pass, shuffle, readPlayerNumber; // Variety of buttons
+    JComboBox<String> numberOfPlayers, difficulty; // dropdown menus
+
     Timer timer;
-    public Human player1;
-    Human player2;
-    Computer comp;
-    boolean isTwoPlayers;
-    boolean doesP1Start;
-    boolean isTimerRunning;
-    int difficultyNumber;
+    TimerTask task;
+    int timerCounter; // Time the timer starts at
+
+    public static Human player1;
+    public static Human player2;
+    public static Computer comp;
+
     Random rand = new Random();
 
+    public static int tournamentScore;
+    int difficultyNumber;
+    int countUntilPass = 0;
+    int target = 0;
+    boolean isTwoPlayers;
+    boolean doesP1Start = true;
+    boolean isTimerRunning;
+
     public BoggleGUI() {
-        setSize(1100, 670);
+
+        // Initialize class properties
+        setSize(1200, 670);
         setName("BOGGLE!");
         setLayout(new GridBagLayout());
 
-        frameC = new GridBagConstraints();
-
         upper = new JPanel();
         upper.setLayout(new GridLayout(3, 1));
-        instructions = new JLabel("Welcome to Boggle! The goal of the game is to find more and longer words than the other player!");
-        instructions2 = new JLabel("Please select difficulty level, number of players, and your target score. ");
+
+        frameC4 = new GridBagConstraints(); // Constraints for GridBag layout
+        frameC4.gridx = 0;  // buttons2 panel x-axis position
+        frameC4.gridy = 0;  // buttons2 panel y-axis position
+        frameC4.ipady = 30; // height in pixels
+
+        frameC = new GridBagConstraints(); // Different constraints for upper panel
+
+        restart = new JButton("Restart");
+        restart.addActionListener(this);
+
+        exit = new JButton("Exit");
+        exit.addActionListener(this);
+
+        buttons2 = new JPanel(new GridLayout(1, 2)); // Buttons2 panel, first component to be added
+        buttons2.add(restart); // Add button to buttons2 panel
+        buttons2.add(exit); // Add button to buttons2 panel
+
+        add(buttons2, frameC4); // Add the panel to the frame with the above constraints
+
+        // Prompts
+        instructions = new JLabel("Welcome to Boggle! The goal of the game is to find more and longer words than the other player!" +
+                                       "\nPlease select difficulty level, number of players, and your target score. ");
         upper.add(instructions);
-        upper.add(instructions2);
 
         // Timer
-        counter = 15;
-        countdown = new JLabel("Time remaining for turn: " + counter + "s");
-        //upper.add(countdown);
+        timerCounter = 15;
+        countdown = new JLabel("Time remaining for turn: " + timerCounter + "s");
 
-        timer = new Timer();
+        //upper.add(countdown); D: why is this commented out?
+
+        timer = new Timer();    // New timer object
         task = new TimerTask() {
             @Override
             public void run() {
-                if (counter > 0&&isTimerRunning) {
-                    counter--;
-                    countdown.setText("Time remaining for turn: " + counter + "s");
+                if (timerCounter > 0&&isTimerRunning) {
+                    timerCounter--;  // Counter goes down by 1
+                    countdown.setText("Time remaining for turn: " + timerCounter + "s"); // Label to display time
                 }
             }
         };
-        timer.scheduleAtFixedRate(task, 0, 1000);
+        timer.scheduleAtFixedRate(task, 0, 1000);   // Changes every 1000 milliseconds - 1 second
 
-        frameC.ipady = 150;
-        frameC.ipadx = 400;
-        frameC.gridwidth = 2;
-        frameC.gridx = 0;
-        frameC.gridy = 0;
-        add(upper, frameC);
+        frameC.ipady = 150; // Upper panel height in pixels
+        frameC.gridwidth = 1;   // How many cells it takes up horizontally
+        frameC.gridx = 1;   // X-axis position on the frame
+        frameC.gridy = 0;   // Y-axis position on the frame
+        add(upper, frameC); // Add the upper panel with the above constraints
 
         // Word Entering Place
-        wordPrompt = new JPanel(new FlowLayout());
-        frameC1 = new GridBagConstraints();
+        wordPrompt = new JPanel(new FlowLayout());  // All components will be beside each other
+        frameC1 = new GridBagConstraints(); // Constraints for this panel as well
 
-        wordLabel = new JLabel("Your word: ");
-        wordPrompt.add(wordLabel);
-        word = new JTextField("Enter word");
-        wordPrompt.add(word);
-        ok = new JButton("OK");
-        wordPrompt.add(ok);
-        pass = new JButton("Pass Turn");
-        wordPrompt.add(pass);
-        shuffle = new JButton("Shuffle Board");
-        wordPrompt.add(shuffle);
-        ok.addActionListener(this);
+        wordLabel = new JLabel("Your word: "); // General label prompting the user
+        wordPrompt.add(wordLabel); // Adding label to the panel
 
-        frameC1.gridx = 1;
-        frameC1.gridy = 1;
-        frameC1.ipady = 20;
-        frameC1.ipadx = 250;
-        //add(wordPrompt, frameC1);
+        word = new JTextField("Enter word"); // Text field so player can enter the word they found
+        wordPrompt.add(word); // Adding the text field to the panel
+
+        ok = new JButton("OK"); // Ok button for when user inputted word
+        wordPrompt.add(ok); // Adding the ok button
+        ok.addActionListener(this); // Add action listener to the button
+
+        pass = new JButton("Pass Turn"); // If user cannot find a word, they can pass
+        wordPrompt.add(pass); // Add the button
+        pass.addActionListener(this); // Add action listener to the button
+
+        shuffle = new JButton("Shuffle Board"); // If after 2 rounds of players not being to go, this will button will show up, so the board can be shuffled
+        wordPrompt.add(shuffle); // Add the shuffle button
+        shuffle.addActionListener(this); // Add action listener to button
+
+        frameC1.gridx = 1; // x-axis position of the panel
+        frameC1.gridy = 1; // y-axis position of thr panel
+        frameC1.ipady = 20; // How tall the panel is in pixels
+        frameC1.ipadx = 250; // How wide the panel is in pixels
 
         //  Middle Panel
         middle = new JPanel();
         frameC2 = new GridBagConstraints();  // Constraints for Frame
 
-        middle.setLayout(new GridBagLayout());
+        middle.setLayout(new GridBagLayout()); // Gridbaglayout for this panel
         middleC = new GridBagConstraints();  // Constraints for Panel
 
         // JPanel to make the scoreboard
@@ -114,7 +147,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         c3.gridy = 0;
         scoreBoard.add(title, c3);
 
-        GridBagConstraints c3version2 = new GridBagConstraints();
+        c3version2 = new GridBagConstraints();
         scores = new JPanel(new FlowLayout());
 
         Border border = BorderFactory.createLineBorder(Color.BLACK);
@@ -145,7 +178,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         readPlayerNumber = new JButton("Submit Mode");
         readPlayerNumber.addActionListener(this);
         mode.add(readPlayerNumber);
-        difficulty = new JComboBox(new String[]{"Easy", "Medium", "Hard"});
+        difficulty = new JComboBox(new String[]{"Easy", "Hard"});
         //mode.add(difficulty);
 
         middleC2.gridx = 0;
@@ -170,27 +203,21 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         middle.add(textFields, middleC3);
 
         // A panel within the middle panel for buttons asking if you want to start, exit, etc.
-        buttons = new JPanel(new GridLayout(2, 2));
+        buttons1 = new JPanel(new GridLayout(1, 2));
 
         middleC4 = new GridBagConstraints();
 
         start = new JButton("Start");
         start.addActionListener(this);
-        buttons.add(start);
+        buttons1.add(start);
         pause = new JButton("Pause");
         pause.addActionListener(this);
-        //buttons.add(pause);
-        restart = new JButton("Restart");
-        restart.addActionListener(this);
-        //buttons.add(restart);
-        exit = new JButton("Exit");
-        exit.addActionListener(this);
-        //buttons.add(exit);
+        buttons1.add(pause);
 
         middleC4.gridx = 0;
         middleC4.gridy = 3;
         middleC4.ipady = 30;
-        middle.add(buttons, middleC4);
+        middle.add(buttons1, middleC4);
 
         frameC2.ipady = 450;
         frameC2.ipadx = 300;
@@ -228,7 +255,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
 
         setVisible(true);
     }
-
+    //K: This was mainly for testing, won't need this
     public static void main(String[] args) {
         BoggleGUI game = new BoggleGUI();
     }
@@ -245,18 +272,18 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             }
             mode.remove(readPlayerNumber);
         }
-        if(counter == 0) {
+        if (timerCounter == 0) {
             doesP1Start = !doesP1Start;
 
         }
         if (command.equals("Submit Difficulty")) {
-            if (difficultyLevel.equals("Easy")) {
-                difficultyNumber = 1;
-            } else if (difficultyLevel.equals("Medium")) {
-                difficultyNumber = 2;
-            } else if (difficultyLevel.equals("Hard")) {
-                difficultyNumber = 3;
+            mode.remove(readPlayerNumber);
+            if (playerNumber.equals("Multiplayer")) {
+                mode.add(difficulty);
             }
+            mode.remove(numberOfPlayers);
+            mode.paintImmediately(0, 0, mode.getWidth(), mode.getHeight());
+            mode.revalidate();
         }
         if (playerNumber.equals("Single Player")) {
             isTwoPlayers = false;
@@ -274,17 +301,18 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             player2 = new Human("Player 2", 0);
         }
         if (command.equals("Start")) {
+            target = Integer.getInteger(principleValue.getText());
             textFields.remove(principleValue);
             middle.remove(mode);
             upper.remove(instructions);
-            upper.remove(instructions2);
             upper.add(countdown);
             middle.remove(start);
-            buttons.add(start);
+            buttons1.add(start);
             targetScore.setText("Target Score: " + principleValue.getText());
-            buttons.add(pause);
-            buttons.add(exit);
-            buttons.add(restart);
+            tournamentScore = Integer.parseInt(principleValue.getText());
+            buttons1.add(pause);
+            buttons2.add(exit);
+            buttons2.add(restart);
             start.setText("Resume");
             middle.remove(principleValue);
             add(wordPrompt, frameC1);
@@ -295,11 +323,23 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
             middle.add(scoreBoard);
             upper.add(countdown);
             add(lower, frameC3);
-            buttons.paintImmediately(0, 0, buttons.getWidth(), buttons.getHeight());
+            buttons1.paintImmediately(0, 0, buttons1.getWidth(), buttons1.getHeight());
+            buttons1.paintImmediately(0, 0, buttons2.getWidth(), buttons2.getHeight());
             middle.paintImmediately(0, 0, middle.getWidth(), middle.getHeight());
             revalidate();
-        }
-        if (command.equals("shake up board")) {
+        } else if (command.equals("Pass")) {
+            doesP1Start = !doesP1Start;
+            changeColour();
+            countUntilPass++;
+            if (countUntilPass == 2) {
+                generateBoard();
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[i].length; j++) {
+                        grid[i][j].setText("" + board[i][j]);
+                    }
+                }
+            }
+        } else if (command.equals("Shuffle Board")) {
             generateBoard();
             for (int i = 0; i < grid.length; i++) {
                 for (int j = 0; j < grid[i].length; j++) {
@@ -315,65 +355,100 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
              * then tally points and check if there's a winner
              */
         } else if (command.equals("OK")) {
+            countUntilPass = 0;
             int isThereAWinner = 5;
-            boolean b1 = verifyWord_Board(word.getText());
-            boolean b2 = verifyWord_Dict(word.getText(), 0, 109583);
-            if (BoggleGame.verifyWord_Board(word.getText()) && BoggleGame.verifyWord_Dict(word.getText(), 0, 109583)) {
-                if (isTwoPlayers) {
-                    if (doesP1Start) {
-                        player1.addScore(word.getText());
-                    } else {
-                        player2.addScore(word.getText());
-                    }
-                    isThereAWinner = BoggleGame.isWinner(player1, player2);
+            //boolean b1 = verifyWord_Board(word.getText());
+            //boolean b2 = verifyWord_Dict(word.getText(), 0, 109583);
+            if (isTwoPlayers) {
+                if (BoggleGame.verifyWord_Board(word.getText()) && BoggleGame.verifyWord_Dict(word.getText(), 0, 109583)) {
+                    if (isTwoPlayers) {
+                        if (doesP1Start) {
+                            player1.addScore(word.getText());
+                        } else {
+                            player2.addScore(word.getText());
+                        }
+                        isThereAWinner = BoggleGame.isWinner(player1, player2);
 
+                    } else {
+                        if (doesP1Start) {
+                            player1.addScore(word.getText());
+                        } else {
+                            comp.addScore(word.getText());
+                        }
+                        isThereAWinner = BoggleGame.isWinner(player1, comp);
+                    }
+                    doesP1Start = !doesP1Start;
+                    changeColour();
                 } else {
                     if (doesP1Start) {
-                        player1.addScore(word.getText());
-                    } else {
-                        comp.addScore(word.getText());
+                        if (BoggleGame.verifyWord_Board(word.getText()) && BoggleGame.verifyWord_Dict(word.getText(), 0, 109583)) {
+                            if (isTwoPlayers) {
+                                if (doesP1Start) {
+                                    player1.addScore(word.getText());
+                                } else {
+                                    player2.addScore(word.getText());
+                                }
+                                isThereAWinner = BoggleGame.isWinner(player1, player2);
+
+                            } else {
+                                if (doesP1Start) {
+                                    player1.addScore(word.getText());
+                                } else {
+                                    comp.addScore(word.getText());
+                                }
+                                isThereAWinner = BoggleGame.isWinner(player1, comp);
+                            }
+                            doesP1Start = !doesP1Start;
+                            changeColour();
+                        }
                     }
-                    isThereAWinner = BoggleGame.isWinner(player1, comp);
+                    if (isThereAWinner == 1) {
+                        //Player 1 Wins
+                        System.out.println("Player 1 Wins");
+                    } else if (isThereAWinner == 2) {
+                        if (isTwoPlayers) System.out.println("Player 2 wins. ");
+                        else System.out.println("Computer wins. ");
+                    }
                 }
-                doesP1Start = !doesP1Start;
-                if (isThereAWinner == 1) {
-                    //Player 1 Wins
-                    System.out.println("Player 1 Wins");
-                } else if (isThereAWinner == 2) {
-                    if (isTwoPlayers) System.out.println("Player 2 wins. ");
-                    else System.out.println("Computer wins. ");
+                word.setText("");
+                wordLabel.setText("Your Word: " + word.getText());
+            } else if (command.equals("Pause")) {
+                isTimerRunning = false;
+                wordPrompt.remove(word);
+                wordPrompt.remove(ok);
+                //wordPrompt.hide();
+                wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
+                wordPrompt.revalidate();
+                repaint();
+                revalidate();
+            } else if (command.equals("Resume")) {
+                isTimerRunning = true;
+                wordPrompt.add(word);
+                wordPrompt.add(ok);
+                wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
+                wordPrompt.revalidate();
+                repaint();
+                revalidate();
+            } else if (command.equals("Restart")) {
+                reset();
+                generateBoard();
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[i].length; j++) {
+                        grid[i][j].setText("" + board[i][j]);
+                    }
                 }
+                timerCounter = 15;
             }
-            word.setText("");
-            wordLabel.setText("Your Word: " + word.getText());
-        } else if (command.equals("Pause")) {
-            isTimerRunning = false;
-            wordPrompt.remove(word);
-            wordPrompt.remove(ok);
-            //wordPrompt.hide();
-            wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
-            wordPrompt.revalidate();
-            repaint();
-            revalidate();
-        } else if (command.equals("Resume")) {
-            isTimerRunning = true;
-            wordPrompt.add(word);
-            wordPrompt.add(ok);
-            wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
-            wordPrompt.revalidate();
-            repaint();
-            revalidate();
-        } else if(command.equals("Restart")) {
-            reset();
-            generateBoard();
-            for (int i = 0; i < grid.length; i++) {
-                for (int j = 0; j < grid[i].length; j++) {
-                    grid[i][j].setText("" + board[i][j]);
-                }
-            }
-            counter = 15;
-            player1.setScore(0);
-            player2.setScore(0);
+        }
+    }
+    public static void changeColour() {
+        if(doesP1Start) {
+            p1.setBackground(Color.BLUE);
+            p2.setBackground(Color.WHITE);
+        }
+        else {
+            p1.setBackground(Color.WHITE);
+            p2.setBackground(Color.BLUE);
         }
     }
 }

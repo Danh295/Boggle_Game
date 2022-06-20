@@ -5,32 +5,29 @@ import java.util.Random;
 
 import static Boggle.BoggleGame.*;
 
-/**
+/** '''''''''' DONE ''''''''''
  * Subclass of Player superclass: Computer player
  */
 public class Computer extends Player {
-
     private final int difficulty;
-    private final ArrayList<String> usedWords = new ArrayList<>();
-    private final ArrayList<String> possibleWords = new ArrayList<>();
 
     /**
      * Constructor method for computer player
-     * @param name player's name (randomly generate for computer player)
+     * @param name player's name
      * @param score player's score
      * @param difficulty computer player's difficulty level
      */
     public Computer (String name, int score, int difficulty) {
-        super();
+        super(name, score);
         this.difficulty = difficulty;
     }
 
-    public String getID() { return ("computer" + difficulty + ": " + name); }
-
-
     /**
-     * Returns all valid words currently on the board
+     * Get ID of the computer player
+     * @return String "computer", difficulty of the computer player, name of the computer player
      */
+    public String getID() { return ("computer" + difficulty + ": " + this.name); }
+
     /**
      * Returns all valid words currently on the board
      */
@@ -45,7 +42,6 @@ public class Computer extends Player {
                 letter = board[r][c];
 
                 word += letter; // add current letter to word string
-
                 int checkContain = checkDict(word, 0, dictionary.size(), false);
 
                 if (checkContain == 1) { // if dictionary contains word/letters, add it to the list
@@ -59,7 +55,7 @@ public class Computer extends Player {
         }
     }
 
-    /** tested
+    /**
      * Conditionally binary search dictionary
      * @param target target to search for
      * @param lower the lower bound of the search
@@ -104,13 +100,15 @@ public class Computer extends Player {
 
     /**
      * Conditionally recursively traverse game-board to search for words
-     * @param word
-     * @param row
-     * @param col
-     * @param visited
+     * @param word current word
+     * @param row current row number
+     * @param col current column number
+     * @param visited array of visited cells
+     * @param used ArrayList of words that's already been passed through
      */
-    public void checkNeighbours(String word, int row, int col, boolean[][] visited, ArrayList<String> guessed) {
+    public void checkNeighbours(String word, int row, int col, boolean[][] visited, ArrayList<String> used) {
         visited[row][col] = true;
+
         for (int[] neighbour : getNeighbours(row, col)) {
             if (neighbour[0] != -1) { // neighbour is valid
 
@@ -118,8 +116,9 @@ public class Computer extends Player {
                     visited[neighbour[0]][neighbour[1]] = true;
 
                     word += board[neighbour[0]][neighbour[1]]; // add neighbouring letter to word
-                    if (!guessed.contains(word)) {
-                        guessed.add(word);
+
+                    if (!used.contains(word)) {
+                        used.add(word);
 
                         int checkContain = checkDict(word, 0, dictionary.size(), false); // check containment of current word
                         if (checkContain == 1) { // if dictionary contains word/letters, add it to the list
@@ -128,7 +127,7 @@ public class Computer extends Player {
                             word = word.substring(0, word.length() - 1);
                             continue;
                         }
-                        checkNeighbours(word, neighbour[0], neighbour[1], visited, guessed); // recursive call on neighbouring cells
+                        checkNeighbours(word, neighbour[0], neighbour[1], visited, used); // recursive call on neighbouring cells
                     }
                     word = word.substring(0, word.length() - 1); // remove the last letter when backtracking
                 }
@@ -136,14 +135,18 @@ public class Computer extends Player {
         }
     }
 
-
-
+    /**
+     * Easy difficulty: get the shortest word of the possible words
+     * @return the current shortest valid word
+     */
     public String getString_easy() {
         String minWord = possibleWords.get(0);
 
         for (String word : possibleWords) {
-            if (!usedWords.contains(word) && word.length() < minWord.length()) {
-                minWord = word;
+            if (word.length() > tournamentScore) {
+                if (!usedWords.contains(word) && word.length() < minWord.length()) {
+                    minWord = word;
+                }
             }
         }
 
@@ -151,24 +154,18 @@ public class Computer extends Player {
         return minWord;
     }
 
-    public String getWord_Medium() {
-        Random random = new Random();
-
-        int index = random.nextInt(0, possibleWords.size()-1);
-        while (usedWords.contains(possibleWords.get(index))) {
-            index = random.nextInt(0, possibleWords.size()-1);
-        }
-
-        usedWords.add(possibleWords.get(index));
-        return possibleWords.get(index);
-    }
-
+    /**
+     * Hard difficulty: return the longest word from the possible words
+     * @return the current longest valid word
+     */
     public String getWord_Hard() {
         String maxWord = possibleWords.get(0);
 
         for (String word : possibleWords) {
-            if (!usedWords.contains(word) && word.length() > maxWord.length()) {
-                maxWord = word;
+            if (word.length() > tournamentScore) {
+                if (!usedWords.contains(word) && word.length() > maxWord.length()) {
+                    maxWord = word;
+                }
             }
         }
         usedWords.add(maxWord);
