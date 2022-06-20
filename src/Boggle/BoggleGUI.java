@@ -276,10 +276,22 @@ public class BoggleGUI extends JFrame implements ActionListener {
 
         setVisible(true);
     }
-
+    public void run() {
+        if (timerCounter == 5) {
+            sysMessage.setText("5 Seconds Left!");
+            countdown.setForeground(Color.RED);
+            countdown.setOpaque(true);
+        } else if (timerCounter == 0) {
+            p1Turn = !p1Turn;
+            changeColour();
+            sysMessage.setText("Time's up! Onto the next player. ");
+            sysMessage.paintImmediately(0, 0, sysMessage.getWidth(), sysMessage.getHeight());
+        }
+    }
     @Override
     public void actionPerformed(ActionEvent event) {
         String playerNumber = Objects.requireNonNull(numberOfPlayers.getSelectedItem()).toString();
+        String playerNum = numberOfPlayers.getSelectedItem().toString();
         String command = event.getActionCommand();
 
         if (command.equals("Submit Mode")) {
@@ -288,27 +300,20 @@ public class BoggleGUI extends JFrame implements ActionListener {
             left.paintImmediately(0,0,left.getWidth(), left.getHeight());
             repaint();
             revalidate();
-            if (playerNumber.equals("Multiplayer")) {
+            if (playerNum.equals("Single player")) {
                 mode.add(difficulty);
-                mode.paintImmediately(0, 0, mode.getWidth(), mode.getHeight());
-                mode.revalidate();
             }
             mode.remove(readPlayerNumber);
             mode.remove(numberOfPlayers);
             mode.paintImmediately(0,0 , mode.getWidth(), mode.getHeight());
             mode.revalidate();
+            left.paintImmediately(0,0,left.getWidth(), left.getHeight());
+            left.revalidate();
+            repaint();
+            revalidate();
         }
-        if(timerCounter == 5) {
-            sysMessage.setText("5 Seconds Left!");
-            countdown.setForeground(Color.RED);
-            countdown.setOpaque(true);
-        }
-        if (timerCounter == 0) {
-            p1Turn = !p1Turn;
-            changeColour();
-        sysMessage.setText("Time's Up! Next player's turn. ");
-        }
-        if(!p1Turn&&isTwoPlayers) {
+
+        if(p1Turn == false && isTwoPlayers == true && player1.getScore()>0) {
             right.hide();
             left.hide();
             upper.hide();
@@ -318,7 +323,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
             left.show();
             upper.show();
         }
-        if (playerNumber.equals("Single Player")) {
+        if (playerNumber.equals("Single player")) {
             isTwoPlayers = false;
             p1Turn = true;
             p2.setText("Computer" + 0 + "");
@@ -369,6 +374,9 @@ public class BoggleGUI extends JFrame implements ActionListener {
                 wordPrompt.remove(ok);
                 wordPrompt.add(word);
                 wordPrompt.add(ok);
+                right.show();
+                left.show();
+                upper.show();
                 textFields.paintImmediately(0, 0, textFields.getWidth(), textFields.getHeight());
                 buttons1.paintImmediately(0, 0, buttons1.getWidth(), buttons1.getHeight());
                 buttons1.paintImmediately(0, 0, buttons2.getWidth(), buttons2.getHeight());
@@ -416,14 +424,18 @@ public class BoggleGUI extends JFrame implements ActionListener {
                             } else {
                                 player2.addScore(word.getText());
                                 p2.setText("Player 2: " + player2.getScore());
-                                p2.paintImmediately(0,0,p2.getWidth(), p2.getHeight());
+                                p2.paintImmediately(0, 0, p2.getWidth(), p2.getHeight());
                             }
                             isThereAWinner = BoggleGame.isWinner(player1, player2);
 
                         }
                         p1Turn = !p1Turn;
                         changeColour();
-                    } else {
+                    }
+                    else {
+                        System.out.println("Word is not valid. ");
+                    }
+                }else {
                         if (p1Turn) {
                             if (verifyWord_Board(word.getText()) && verifyWord_Dict(word.getText(), 0, 109583)) {
                                 if (isTwoPlayers) {
@@ -439,6 +451,9 @@ public class BoggleGUI extends JFrame implements ActionListener {
                                 p1Turn = !p1Turn;
                                 changeColour();
                             }
+                            else {
+                                System.out.println("Word is not valid. ");
+                            }
                         }
                         if (isThereAWinner == 1) {
                             //Player 1 Wins
@@ -453,7 +468,6 @@ public class BoggleGUI extends JFrame implements ActionListener {
                     wordLabel.paintImmediately(0,0,wordLabel.getWidth(), wordLabel.getHeight());
                     p1.setText("Player 1" + player1.getScore());
                     p1.paintImmediately(0,0,p1.getWidth(), p1.getHeight());
-                }
             }
             case "Pause" -> {
                 isTimerRunning = false;
