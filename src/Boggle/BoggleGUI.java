@@ -18,7 +18,7 @@ import static Boggle.BoggleGame.*;
  *      - sysMessage: warning starting from the 5 second mark - "player x 's turn is ending soon, submit your word"
  *      - restart timer & switch turn to other player
  * - when a word is submitted, bring timer to 0 & switch turn
- *      - sysMesdsage - turn swticehs
+ *      - sysMessage - turn switches
  * - sysMessage: show current player turn
  * - Move 'Your word' JLabel in front of the text field
  * - make 'pass turn' button functional (switch turns when clicked)
@@ -93,7 +93,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
 
         //buttons2.hide();
 
-        buttons2.hide();
+        buttons2.setVisible(false);
 
         upper = new JPanel();
         upper.setLayout(new GridLayout(3, 1));
@@ -120,7 +120,19 @@ public class BoggleGUI extends JFrame implements ActionListener {
                 if (timerCounter > 0&&isTimerRunning) {
                     timerCounter--;  // Counter goes down by 1
                     countdown.setText("Time remaining for turn: " + timerCounter + "s"); // Label to display time
+                    if(timerCounter == 5) {
+                        sysMessage.setText("5 Seconds Left!");
+                        countdown.setForeground(Color.RED);
+                        countdown.setOpaque(true);
+                    }
                 }
+                if (timerCounter == 0) {
+                    p1Turn = !p1Turn;
+                    sysMessage.setText("Time's Up! Onto the next question. ");
+                    changeColour();
+                    timerCounter = 15;
+                }
+                countdown.paintImmediately(0,0,countdown.getWidth(), countdown.getHeight());
             }
         };
         timer.scheduleAtFixedRate(task, 0, 1000);   // Changes every 1000 milliseconds - 1 second
@@ -245,11 +257,11 @@ public class BoggleGUI extends JFrame implements ActionListener {
         pause = new JButton("Pause");//pause button
         pause.addActionListener(this);
         buttons1.add(pause); //add pause to buttons
-        pause.hide();
+        pause.setVisible(false);
 
         //buttons1.hide();
 
-        start.hide();
+        start.setVisible(false);
 
         leftC4.gridx = 0; // x-axis position
         leftC4.gridy = 3; // y-axis position
@@ -309,30 +321,31 @@ public class BoggleGUI extends JFrame implements ActionListener {
             left.paintImmediately(0,0,left.getWidth(), left.getHeight());
             repaint();
             revalidate();
-            if (playerNumber.equals("Multiplayer")) {
+            if (playerNumber.equals("Single player")) {
                 mode.add(difficulty);
-                mode.paintImmediately(0, 0, mode.getWidth(), mode.getHeight());
-                mode.revalidate();
             }
             mode.remove(readPlayerNumber);
             mode.remove(numberOfPlayers);
             mode.paintImmediately(0,0 , mode.getWidth(), mode.getHeight());
             mode.revalidate();
+            left.paintImmediately(0,0,left.getWidth(), left.getHeight());
+            left.revalidate();
+            repaint();
+            revalidate();
         }
         if(timerCounter == 5) {
             sysMessage.setText("5 Seconds Left!");
             countdown.setForeground(Color.RED);
             countdown.setOpaque(true);
         }
-
-        if (timerCounter == 0) {
+        else if (timerCounter == 0) {
             p1Turn = !p1Turn;
 // conflict
 
         }
 
         if (command.equals("Submit Difficulty")) {
-            start.show();
+            start.setVisible(true);
             buttons1.paintImmediately(0,0,buttons1.getWidth(), buttons1.getHeight());
             mode.remove(readPlayerNumber);
             if (playerNumber.equals("Multiplayer")) {
@@ -346,14 +359,14 @@ public class BoggleGUI extends JFrame implements ActionListener {
         sysMessage.setText("Time's Up! Next player's turn. ");
         }
         if(!p1Turn&&isTwoPlayers) {
-            right.hide();
-            left.hide();
-            upper.hide();
+            right.setVisible(false);
+            left.setVisible(false);
+            upper.setVisible(false);
         }
         else {
-            right.show();
-            left.show();
-            upper.show();
+            right.setVisible(true);
+            left.setVisible(true);
+            upper.setVisible(true);
 //
         }
         if (playerNumber.equals("Single Player")) {
@@ -379,8 +392,8 @@ public class BoggleGUI extends JFrame implements ActionListener {
             case "Start" -> {
                 changeColour();
                 target = (Integer.parseInt(principleValue.getText()));
-                buttons1.show();
-                pause.show();
+                buttons1.setVisible(true);
+                pause.setVisible(true);
                 textFields.remove(principleValue);
                 left.remove(mode);
                 upper.remove(instructions1);
@@ -441,99 +454,62 @@ public class BoggleGUI extends JFrame implements ActionListener {
              * Once word is submitted, check to see if it's valid in the board and in the dictionary,
              * then tally points and check if there's a winner
              */
-            case "OK" -> {
-                countUntilPass = 0;
-                int isThereAWinner = 5;
-                //boolean b1 = verifyWord_Board(word.getText());
-                //boolean b2 = verifyWord_Dict(word.getText(), 0, 109583);
-                if (isTwoPlayers) {
-                    if (verifyWord_Board(word.getText()) && verifyWord_Dict(word.getText(), 0, 109583)) {
-                        if (isTwoPlayers) {
-                            if (p1Turn) {
-                                player1.addScore(word.getText());
-                            } else {
-                                player2.addScore(word.getText());
-// conflict
-                            }
-                            isThereAWinner = BoggleGame.isWinner(player1, player2);
-
+        case "OK" -> {
+            countUntilPass = 0;
+            int isThereAWinner = 5;
+            //boolean b1 = verifyWord_Board(word.getText());
+            //boolean b2 = verifyWord_Dict(word.getText(), 0, 109583);
+            if (isTwoPlayers) {
+                if (verifyWord_Board(word.getText()) && verifyWord_Dict(word.getText(), 0, 109583)) {
+                    if (isTwoPlayers) {
+                        if (p1Turn) {
+                            player1.addScore(word.getText());
                         } else {
-                            if (p1Turn) {
-                                player1.addScore(word.getText());
-                            } else {
-                                comp.addScore(word.getText());
-                            }
-                            isThereAWinner = BoggleGame.isWinner(player1, comp);
-// conlfict
-                                p2.setText("Player 2: " + player2.getScore());
-                                p2.paintImmediately(0,0,p2.getWidth(), p2.getHeight());
-                            }
-                            isThereAWinner = BoggleGame.isWinner(player1, player2);
-
-//
-                        p1Turn = !p1Turn;
-                        changeColour();
+                            player2.addScore(word.getText());
+// conflict
+                        }
+                        isThereAWinner = BoggleGame.isWinner(player1, player2);
                     } else {
                         if (p1Turn) {
-                            if (verifyWord_Board(word.getText()) && verifyWord_Dict(word.getText(), 0, 109583)) {
-                                if (isTwoPlayers) {
-                                    if (p1Turn) {
-                                        player1.addScore(word.getText());
-                                    } else {
-                                        player2.addScore(word.getText());
-                                    }
-                                    isThereAWinner = BoggleGame.isWinner(player1, player2);
-
-                                } else {
-                                    if (p1Turn) {
-                                        player1.addScore(word.getText());
-                                    } else {
-                                        comp.addScore(word.getText());
-// conflict
-                                        comp.addScore(word.getText());
-                                        p2.setText("Computer: " + comp.getScore());
-                                        p2.paintImmediately(0,0,p2.getWidth(), p2.getHeight());
-//
-                                    }
-                                    isThereAWinner = BoggleGame.isWinner(player1, comp);
-                                }
-                                p1Turn = !p1Turn;
-                                changeColour();
+                            player1.addScore(word.getText());
+                        } else {
+                            comp.addScore(word.getText());
                         }
-                        if (isThereAWinner == 1) {
-                            //Player 1 Wins
-// conflict
-                            System.out.println("Player 1 Wins");
-                        } else if (isThereAWinner == 2) {
-                            if (isTwoPlayers) System.out.println("Player 2 wins. ");
-                            else System.out.println("Computer wins. ");
-//
-                            wordLabel.setText("Player 1 Wins");
-                        } else if (isThereAWinner == 2) {
-                            if (isTwoPlayers) wordLabel.setText("Player 2 wins. ");
-                            else wordLabel.setText("Computer wins. ");
-// conflict
-                        }
+                        isThereAWinner = BoggleGame.isWinner(player1, comp);
+// conlfict
+                        p2.setText("Player 2: " + player2.getScore());
+                        p2.paintImmediately(0, 0, p2.getWidth(), p2.getHeight());
                     }
-                    word.setText("");
-                    wordLabel.setText("Your Word: " + word.getText());
+                    isThereAWinner = BoggleGame.isWinner(player1, player2);
+                    p1Turn = !p1Turn;
+                    changeColour();
+                    if (isThereAWinner == 1) {
+                        //Player 1 Wins
+                        wordLabel.setText("Player 1 Wins");
+                    } else if (isThereAWinner == 2) {
+                        if (isTwoPlayers) wordLabel.setText("Player 2 wins. ");
+                        else wordLabel.setText("Computer wins. ");
+                        word.setText("");
+                        wordLabel.setText("Your Word: " + word.getText());
 //
-                    wordLabel.paintImmediately(0,0,wordLabel.getWidth(), wordLabel.getHeight());
-                    p1.setText("Player 1" + player1.getScore());
-                    p1.paintImmediately(0,0,p1.getWidth(), p1.getHeight());
-//
+                        wordLabel.paintImmediately(0, 0, wordLabel.getWidth(), wordLabel.getHeight());
+                        p1.setText("Player 1" + player1.getScore());
+                        p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
+// conflict
+                    }
                 }
+//
             }
+        }
             case "Pause" -> {
                 isTimerRunning = false;
                 wordPrompt.remove(word);
                 wordPrompt.remove(ok);
-                //wordPrompt.hide();
                 wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
                 wordPrompt.revalidate();
-                right.hide();
-                pass.hide();
-                shuffle.hide();
+                right.setVisible(false);
+                pass.setVisible(false);
+                shuffle.setVisible(false);
                 repaint();
                 revalidate();
             }
@@ -543,9 +519,9 @@ public class BoggleGUI extends JFrame implements ActionListener {
                 wordPrompt.add(ok);
                 wordPrompt.paintImmediately(0, 0, wordPrompt.getWidth(), wordPrompt.getHeight());
                 wordPrompt.revalidate();
-                pass.hide();
-                shuffle.hide();
-                right.show();
+                pass.setVisible(false);
+                shuffle.setVisible(false);
+                right.setVisible(true);
                 repaint();
                 revalidate();
             }
