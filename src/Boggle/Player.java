@@ -1,11 +1,22 @@
 package Boggle;
 
-/**
+import java.util.ArrayList;
+
+/** '''''''''' DONE ''''''''''
  * Abstract parent class for all game players
  */
 public abstract class Player {
-    String name;
-    int score;
+    public String name;
+    public int score;
+
+
+    public final ArrayList<String> usedWords = new ArrayList<>();
+    public final ArrayList<String> possibleWords = new ArrayList<>();
+
+    public Player(String name, int score) {
+        this.name = name;
+        this.score = score;
+    }
 
     /* accessor methods */
     public abstract String getID();
@@ -27,6 +38,5 @@ public abstract class Player {
         else if (wordLength == 7) score += 5;
         else if (wordLength >= 9) score += 11;
     }
-
 }
 
