@@ -58,7 +58,6 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         frameC4.gridx = 0;  // buttons2 panel x-axis position
         frameC4.gridy = 0;  // buttons2 panel y-axis position
         frameC4.ipady = 30; // height in pixels
-
         frameC = new GridBagConstraints(); // Different constraints for upper panel
 
         restart = new JButton("Restart");
@@ -84,7 +83,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
 
         //upper.add(countdown); D: why is this commented out?
 
-        timer = new Timer();    // New timer object
+        timer = new Timer();
         task = new TimerTask() {
             @Override
             public void run() {
@@ -100,6 +99,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         frameC.gridwidth = 1;   // How many cells it takes up horizontally
         frameC.gridx = 1;   // X-axis position on the frame
         frameC.gridy = 0;   // Y-axis position on the frame
+
         add(upper, frameC); // Add the upper panel with the above constraints
 
         // Word Entering Place
@@ -131,12 +131,12 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
 
         //  Middle Panel
         middle = new JPanel();
-        frameC2 = new GridBagConstraints();  // Constraints for Frame
+
 
         middle.setLayout(new GridBagLayout()); // Gridbaglayout for this panel
         middleC = new GridBagConstraints();  // Constraints for Panel
 
-        // JPanel to make the scoreboard
+        // Scoreboard
         scoreBoard = new JPanel(new GridBagLayout());   // JPanel for keeping score chart
         c3 = new GridBagConstraints();
 
@@ -172,13 +172,16 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         //  Single or Multiplayer Mode
         mode = new JPanel(new FlowLayout());
         middleC2 = new GridBagConstraints();
+
         String[] choice = {"Single player", "Multiplayer"};
-        numberOfPlayers = new JComboBox(choice);
+        numberOfPlayers = new JComboBox<> (choice);
         mode.add(numberOfPlayers);
+
         readPlayerNumber = new JButton("Submit Mode");
         readPlayerNumber.addActionListener(this);
+
         mode.add(readPlayerNumber);
-        difficulty = new JComboBox(new String[]{"Easy", "Hard"});
+        difficulty = new JComboBox<> (new String[]{"Easy", "Hard"});
         //mode.add(difficulty);
 
         middleC2.gridx = 0;
@@ -219,6 +222,7 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         middleC4.ipady = 30;
         middle.add(buttons1, middleC4);
 
+        frameC2 = new GridBagConstraints();  // Constraints for Frame
         frameC2.ipady = 450;
         frameC2.ipadx = 300;
         frameC2.gridwidth = 1;
