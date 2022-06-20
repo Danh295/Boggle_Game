@@ -84,6 +84,10 @@ public class BoggleGUI extends JFrame implements ActionListener { // D: thinking
         wordPrompt.add(word);
         ok = new JButton("OK");
         wordPrompt.add(ok);
+        pass = new JButton("Pass Turn");
+        wordPrompt.add(pass);
+        shuffle = new JButton("Shuffle Board");
+        wordPrompt.add(shuffle);
         ok.addActionListener(this);
 
         frameC1.gridx = 1;
