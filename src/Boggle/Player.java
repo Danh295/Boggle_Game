@@ -18,11 +18,11 @@ public abstract class Player {
         this.score = score;
     }
 
-    // accessor methods
+    /* accessor methods */
     public abstract String getID();
     public int getScore() { return score; }
 
-    // modifier methods
+    /* modifier methods */
     public void setName(String name) { this.name = name; }
     public void setScore(int score) { this.score = score; }
 
