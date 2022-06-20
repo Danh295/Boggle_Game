@@ -2,11 +2,12 @@ package Boggle;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Timer;
 
 /**
  * Main class to the Boggle game, will contain global variables for the whole project as well as utility methods
  */
-public class BoggleGame {
+public class BoggleGame extends BoggleGUI{
     public static int targetScore;
     public static ArrayList<String> dictionary = new ArrayList<>();
     public static int maxWordLength;
@@ -100,27 +101,26 @@ public class BoggleGame {
      */
     public static boolean verifyWord_Dict(String target, int lower, int upper) {
         if (lower <= upper) { // if there are more elements to check, that are still in range
+            target = target.toLowerCase();
             int mid = (upper - lower) / 2; // update middle index
+            int charIndex = 0; // update character index used for comparisons
             boolean found = false;
-            int currChar = 0; // update character index
 
-            // check if current element = target
-            if (dictionary.get(mid+lower).equals(target)) {
-                return true;
-            }
+            String currWord = dictionary.get(mid+lower);
+            if (currWord.equals(target)) return true; // check if current word is the target
 
             // check if character index needs to be updated
-            while (dictionary.get(mid).charAt(currChar) == target.charAt(currChar)) {
-                if (currChar == dictionary.size() - 1 || currChar == target.length() - 1) { // if out of range
-                    if (dictionary.get(mid).length() > target.length()) { // if word contains target
+            while (currWord.charAt(charIndex) == target.charAt(charIndex)) {
+                if (charIndex == currWord.length() - 1 || charIndex == target.length() - 1) { // if out of range
+                    if (currWord.length() > target.length()) { // if word contains target
                         found = true;
                     }
                     break;
                 }
-                currChar += 1;
+                charIndex += 1;
             }
 
-            if (dictionary.get(mid).charAt(currChar) > target.charAt(currChar) || found) { // if word's character's ascii value is greater than the characters, or if word contains the target
+            if (currWord.charAt(charIndex) > target.charAt(charIndex) || found) { // if word's character's ascii value is greater than the characters, or if word contains the target
                 return verifyWord_Dict(target, lower, mid - 1); // recursive call w/ updated upper bound
             }
             return verifyWord_Dict(target, mid + 1, upper); // recursive call w/ updated lower bound
@@ -136,10 +136,16 @@ public class BoggleGame {
      */
     public static boolean verifyWord_Board(String target) {
         boolean[][] visited = new boolean[5][5];
+        String word;
+        char letter;
         for (int row = 0; row < 5; row ++) {
             for (int col = 0; col < 5; col++) {
-                if (board[row][col] == target.charAt(0)) {
-                    return searchWord(target, row, col, 1, visited);
+                word = "";
+                letter = board[row][col];
+
+                word += letter;
+                if (letter == target.charAt(0)) {
+                    return searchWord(target, word, row, col, visited);
                 }
             }
         }
@@ -149,25 +155,31 @@ public class BoggleGame {
     /**
      * Recursively traverses the game board in search for a word
      * @param target the target string to search for
+     * @param word the current word
      * @param row the row number of the current letter on the board
      * @param col the column number of the current letter on the board
-     * @param index the current index position of the character in the word
      * @param visited array to mark already visited coordinates
      * @return true: if there is a path
      */
-    public static boolean searchWord(String target, int row, int col, int index, boolean[][] visited) {
-        if (index == target.length()) {
-            return false;
-        }
+    public static boolean searchWord(String target, String word, int row, int col, boolean[][] visited) {
+        visited[row][col] = true;
 
-        int[][] neighbours = getNeighbours(row, col);
-        for (int[] neighbour : neighbours) {
-            if (neighbour[0] != -1 && !visited[neighbour[0]][neighbour[1]]) {
-                visited[neighbour[0]][neighbour[1]] = true;
-                if (index == target.length()-1 && target.charAt(index) == board[neighbour[0]][neighbour[1]])
-                    return true;
+        if (word.equals(target)) return true; // if current word is equal to target
+        if (word.length() == target.length()) return false; // if current word is same length as target
 
-                return searchWord(target, row, col, index + 1, visited);
+        for (int[] neighbour : getNeighbours(row, col)) {
+            if (neighbour[0] != -1) { // if neighbour is valid
+
+                if (!visited[neighbour[0]][neighbour[1]]) { // if neighbour is unvisited
+                    visited[neighbour[0]][neighbour[1]] = true;
+                    word += board[neighbour[0]][neighbour[1]]; // add neighbouring letter to current word
+
+                    if (word.equals(target)) return true; // if current word is equal to target
+                    if (word.length() == target.length()) return false; // if current word is same length as target
+
+                    if (searchWord(target, word, neighbour[0], neighbour[1], visited)) return true;
+                    else word = word.substring(0, word.length() - 1);
+                }
             }
         }
         return false;
@@ -218,15 +230,15 @@ public class BoggleGame {
      */
     public void switchTurns(int playersTurn){
         try{
-            //stop the timer
+            //timer.stop();
         }catch(Exception ex){
         }
         if(playersTurn == 1){
             //change features
-            //start the timer for the other players turn
+            //startTimer
         }else if(playersTurn == 2){
             //change features
-            //start the timer for the other players turn
+            //startTimer
         }
     }
     /**
@@ -235,6 +247,11 @@ public class BoggleGame {
     public void shakeTheBoard(){//randomize the word again
     generateBoard();
     }
+
+    /**
+     * Decides who goes first
+     * @return randomNumber
+     */
     public int firstTurnDecider(){//decides who goes first
         int randomNumber = (int) (Math.random() * 2 + 1);
         return randomNumber;
@@ -245,6 +262,9 @@ public class BoggleGame {
      * Reset variable values for new games
      */
     public static void reset() {
+
+        BoggleGame.targetScore = 0;
+
 
         /*
         delete player instances
