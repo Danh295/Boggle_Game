@@ -124,7 +124,6 @@ public class BoggleGame extends BoggleGUI{
                 word += letter;
 
                 if (letter == target.charAt(0)) {
-                    System.out.println(letter);
                     return searchWord(target, word, row, col, visited);
                 }
             }
