@@ -44,13 +44,7 @@ public class Computer extends Player {
                 letter = board[r][c];
 
                 word += letter; // add current letter to word string
-                int checkContain = checkDict(word, 0, dictionary.size(), false);
 
-                if (checkContain == 1) { // if dictionary contains word/letters, add it to the list
-                    possibleWords.add(word);
-                } else if (checkContain == -1) { // if dictionary doesn't contain the word/letters, move on to the next letter
-                    continue;
-                }
                 boolean[][] visited = new boolean[5][5];
                 checkNeighbours(word, r, c, visited, new ArrayList<>()); // dfs traverse neighbours until there are no more valid words from this letter
             }
