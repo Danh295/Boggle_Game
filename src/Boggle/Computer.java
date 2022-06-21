@@ -142,18 +142,21 @@ public class Computer extends Player {
      * @return the current shortest valid word
      */
     public String getString_easy() {
-        String minWord = possibleWords.get(0);
+        if (!possibleWords.isEmpty()) {
+            String minWord = possibleWords.get(0);
 
-        for (String word : possibleWords) {
-            if (word.length() > tournamentScore) {
-                if (!usedWords.contains(word) && word.length() < minWord.length()) {
-                    minWord = word;
+            for (String word : possibleWords) {
+                if (word.length() > tournamentScore) {
+                    if (!usedWords.contains(word) && word.length() < minWord.length()) {
+                        minWord = word;
+                    }
                 }
             }
-        }
 
-        usedWords.add(minWord);
-        return minWord;
+            usedWords.add(minWord);
+            return minWord;
+        }
+        return null;
     }
 
     /**
@@ -161,16 +164,19 @@ public class Computer extends Player {
      * @return the current longest valid word
      */
     public String getWord_Hard() {
-        String maxWord = possibleWords.get(0);
+        if (!possibleWords.isEmpty()) {
+            String maxWord = possibleWords.get(0);
 
-        for (String word : possibleWords) {
-            if (word.length() > tournamentScore) {
-                if (!usedWords.contains(word) && word.length() > maxWord.length()) {
-                    maxWord = word;
+            for (String word : possibleWords) {
+                if (word.length() > tournamentScore) {
+                    if (!usedWords.contains(word) && word.length() > maxWord.length()) {
+                        maxWord = word;
+                    }
                 }
             }
+            usedWords.add(maxWord);
+            return maxWord;
         }
-        usedWords.add(maxWord);
-        return maxWord;
+        return null;
     }
 }
