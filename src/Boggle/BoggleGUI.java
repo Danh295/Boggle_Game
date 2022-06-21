@@ -59,7 +59,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
 
     public static int tournamentScore;
     static int difficultyNumber;
-    int countUntilPass = 0;
+    static int countUntilPass = 0;
     int target = 0;
     int isThereAWinner = 5;
     static boolean isTwoPlayers = true;
@@ -138,7 +138,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
                     timerCounter = 15;
                 }
                 else {
-                    countdown.setForeground(Color.RED);
+                    countdown.setForeground(Color.BLACK);
                     countdown.setOpaque(true);
                     countdown.paintImmediately(0,0,countdown.getWidth(), countdown.getHeight());
                 }
@@ -406,6 +406,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
 
         switch (command) {
             case "Start" -> {
+                player2.setName(p2Name.getText());
                 mode.remove(lower);
                 changeColour();
                 target = (Integer.parseInt(principleValue.getText()));
@@ -445,13 +446,13 @@ public class BoggleGUI extends JFrame implements ActionListener {
                 wordPrompt.add(ok);
                 textFields.paintImmediately(0, 0, textFields.getWidth(), textFields.getHeight());
                 buttons1.paintImmediately(0, 0, buttons1.getWidth(), buttons1.getHeight());
-                buttons1.paintImmediately(0, 0, buttons2.getWidth(), buttons2.getHeight());
+                buttons2.paintImmediately(0, 0, buttons2.getWidth(), buttons2.getHeight());
                 left.paintImmediately(0, 0, left.getWidth(), left.getHeight());
                 right.paintImmediately(0,0,right.getWidth(), right.getHeight());
                 repaint();
                 revalidate();
             }
-            case "Pass" -> {
+            case "Pass Turn" -> {
                 p1Turn = !p1Turn;
                 changeColour();
                 countUntilPass++;
@@ -491,12 +492,11 @@ public class BoggleGUI extends JFrame implements ActionListener {
                                 wordLabel.setText("Last word: " + word.getText());
                             } else {
                                 player2.addScore(word.getText());
-// conflict
                             }
                             isThereAWinner = BoggleGame.isWinner(player1, player2);
-                            p1.setText(player1.getID() + player1.getScore());
+                            p1.setText(player1.getID() + ":" + player1.getScore());
                             p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
-                            p2.setText(player2.getID() + comp.getScore());
+                            p2.setText(player2.getID() + ":" + player2.getScore());
                             p1Turn = !p1Turn;
 
                         } else {
