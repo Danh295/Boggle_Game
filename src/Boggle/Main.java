@@ -11,8 +11,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         File dict = new File("dictionary.txt");
         Scanner dictReader = new Scanner(dict);
+        String currWord;
         while (dictReader.hasNext()) {
-            dictionary.add(dictReader.next());
+            currWord = dictReader.next();
+            if (currWord.length() > 2) dictionary.add(dictReader.next());
 
         }
 
