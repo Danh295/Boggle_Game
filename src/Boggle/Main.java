@@ -14,7 +14,7 @@ public class Main {
         String currWord;
         while (dictReader.hasNext()) {
             currWord = dictReader.next();
-            if (currWord.length() > 2) dictionary.add(dictReader.next());
+            if (currWord.length() > 2) dictionary.add(currWord);
 
         }
 
