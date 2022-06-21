@@ -9,7 +9,7 @@ import static Boggle.BoggleGame.*;
  * Subclass of Player superclass: Computer player
  */
 public class Computer extends Player {
-    private final int difficulty;
+    private int difficulty;
 
     /**
      * Constructor method for computer player
@@ -21,7 +21,9 @@ public class Computer extends Player {
         super(name, score);
         this.difficulty = difficulty;
     }
-
+    public void changeDifficulty(int newDifficulty) {
+        this.difficulty = newDifficulty;
+    }
     /**
      * Get ID of the computer player
      * @return String "computer", difficulty of the computer player, name of the computer player
