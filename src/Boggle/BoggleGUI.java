@@ -58,10 +58,11 @@ public class BoggleGUI extends JFrame implements ActionListener {
     Random rand = new Random();
 
     public static int tournamentScore;
-    int difficultyNumber;
+    static int difficultyNumber;
     int countUntilPass = 0;
     int target = 0;
-    boolean isTwoPlayers;
+    int isThereAWinner = 5;
+    static boolean isTwoPlayers = true;
     static boolean p1Turn = true;
     boolean isTimerRunning = false;
 
@@ -120,38 +121,28 @@ public class BoggleGUI extends JFrame implements ActionListener {
         task = new TimerTask() {
             @Override
             public void run() {
-                if (timerCounter > 0&&isTimerRunning) {
+                if (timerCounter > 0 && isTimerRunning) {
                     timerCounter--;  // Counter goes down by 1
                     countdown.setText("Time remaining for turn: " + timerCounter + "s"); // Label to display time
-                    if(timerCounter == 5) {
+                    if (timerCounter == 5) {
                         sysMessage.setText("5 Seconds Left!");
                         countdown.setForeground(Color.RED);
                         countdown.setOpaque(true);
+                        countdown.paintImmediately(0,0,countdown.getWidth(), countdown.getHeight());
                     }
                 }
-                if (timerCounter == 0) {
+                else if (timerCounter == 0) {
                     p1Turn = !p1Turn;
-                    sysMessage.setText("Time's Up! Onto the next question. ");
+                    sysMessage.setText("Time's Up! Onto the next player. ");
                     changeColour();
                     timerCounter = 15;
                 }
-                countdown.paintImmediately(0,0,countdown.getWidth(), countdown.getHeight());
-                countdown.revalidate();
-                revalidate();
-                repaint();
-                /*
-                if(!p1Turn&&!isTwoPlayers) {
-                    right.setVisible(false);
-                    left.setVisible(false);
-                    upper.setVisible(false);
+                else {
+                    countdown.setForeground(Color.RED);
+                    countdown.setOpaque(true);
+                    countdown.paintImmediately(0,0,countdown.getWidth(), countdown.getHeight());
                 }
-                else if(p1Turn&&!isTwoPlayers){
-                        right.setVisible(true);
-                        left.setVisible(true);
-                        upper.setVisible(true);
-                    }
-                }
-                */
+
             }
         };
         timer.scheduleAtFixedRate(task, 0, 1000);   // Changes every 1000 milliseconds - 1 second
@@ -167,7 +158,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
         wordPrompt = new JPanel(new FlowLayout());  // All components will be beside each other
         frameC1 = new GridBagConstraints(); // Constraints for this panel as well
 
-        wordLabel = new JLabel("Your word: "); // General label prompting the user
+        wordLabel = new JLabel("Last word: "); // General label prompting the user
         wordPrompt.add(wordLabel); // Adding label to the panel
 
         word = new JTextField("Enter word"); // Text field so player can enter the word they found
@@ -393,13 +384,19 @@ public class BoggleGUI extends JFrame implements ActionListener {
         }
 
  */
-        if (playerNumber.equals("Single Player")) {
+        if (playerNumber.equals("Single player")) {
             isTwoPlayers = false;
             p1Turn = true;
             p2.setText("Computer" + 0 + "");
             scores.paintImmediately(0, 0, scores.getWidth(), scores.getHeight());
             scoreBoard.paintImmediately(0, 0, scoreBoard.getWidth(), scoreBoard.getHeight());
             left.paintImmediately(0, 0, left.getWidth(), left.getHeight());
+            if(difficulty.getSelectedItem().toString().equals("Easy")) {
+                difficultyNumber = 1;
+            }
+            else {
+                difficultyNumber = 2;
+            }
             comp.changeDifficulty(difficultyNumber);
 
         } else if (playerNumber.equals("Multiplayer")&&command.equals("Start")) {
@@ -491,11 +488,16 @@ public class BoggleGUI extends JFrame implements ActionListener {
                         if (isTwoPlayers) {
                             if (p1Turn) {
                                 player1.addScore(word.getText());
+                                wordLabel.setText("Last word: " + word.getText());
                             } else {
                                 player2.addScore(word.getText());
 // conflict
                             }
                             isThereAWinner = BoggleGame.isWinner(player1, player2);
+                            p1.setText(player1.getID() + player1.getScore());
+                            p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
+                            p2.setText(player2.getID() + comp.getScore());
+                            p1Turn = !p1Turn;
 
                         } else {
                             if (p1Turn) {
@@ -505,26 +507,26 @@ public class BoggleGUI extends JFrame implements ActionListener {
                             }
                             isThereAWinner = BoggleGame.isWinner(player1, comp);
 // conlfict
-                            p1.setText("Player 1: " + player1.getScore());
+                            p1.setText(player1.getID() + ":" + player1.getScore());
                             p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
                             p2.setText("Computer: " + comp.getScore());
+                            p1Turn = !p1Turn;
+                            computerTurn();
                         }
-                        isThereAWinner = BoggleGame.isWinner(player1, player2);
 
 //
-                        p1Turn = !p1Turn;
+
                         changeColour();
                         if (isThereAWinner == 1) {
                             //Player 1 Wins
                             wordLabel.setText("Player 1 Wins");
-                        } else if (isThereAWinner == 2) {
-                            if (isTwoPlayers) wordLabel.setText("Player 2 wins. ");
-                            else wordLabel.setText("Computer wins. ");
-                            word.setText("");
-                            //wordLabel.setText("Your Word: " + word.getText());
-                            p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
-// conflict
+                            timerCounter = 5;
+                            if(timerCounter == 0) {
+                                dispose();
+                            }
                         }
+// conflict
+                        timerCounter = 15;
                     }
                     else {
                         wordLabel.setText("Not a word. Try again. ");
@@ -585,5 +587,52 @@ public class BoggleGUI extends JFrame implements ActionListener {
         scores.paintImmediately(0,0,scores.getWidth(), scores.getHeight());
         scoreBoard.paintImmediately(0,0,scoreBoard.getWidth(), scoreBoard.getHeight());
         left.paintImmediately(0,0,left.getWidth(), left.getHeight());
+    }
+    public void computerTurn() {
+        if (p1Turn == false && isTwoPlayers == false) {
+            String compWord = "";
+            comp.getWords();
+            if (difficultyNumber == 1) {
+                compWord = comp.getString_easy();
+                targetScore.setText("Last Word: " + compWord);
+                comp.addScore(compWord);
+                p2.setText("Computer: " + comp.getScore());
+            }
+            else if (difficultyNumber == 2) {
+                compWord = comp.getWord_Hard();
+                targetScore.setText("Last Word: " + compWord);
+                comp.addScore(compWord);
+                p2.setText("Computer: " + comp.getScore());
+            }
+            if (isThereAWinner == 2) {
+                if (isTwoPlayers) wordLabel.setText("Player 2 wins. ");
+                else wordLabel.setText("Computer wins. ");
+                word.setText("");
+                wordLabel.setText("Your Word: " + word.getText());
+                p1.paintImmediately(0, 0, p1.getWidth(), p1.getHeight());
+                timerCounter = 5;
+                if (timerCounter == 0) {
+                    dispose();
+                }
+// conflict
+            }
+            }
+            countdown.paintImmediately(0, 0, countdown.getWidth(), countdown.getHeight());
+            countdown.revalidate();
+            revalidate();
+            repaint();
+                /*
+                if(!p1Turn&&!isTwoPlayers) {
+                    right.setVisible(false);
+                    left.setVisible(false);
+                    upper.setVisible(false);
+                }
+                else if(p1Turn&&!isTwoPlayers){
+                        right.setVisible(true);
+                        left.setVisible(true);
+                        upper.setVisible(true);
+                    }
+                }
+                */
     }
 }

@@ -8,7 +8,6 @@ import java.util.Random;
  */
 public class BoggleGame extends BoggleGUI{
 
-    public static int targetScore;
     public static ArrayList<String> dictionary = new ArrayList<>();
     public static char[][] board = new char[5][5];
     public static char[][] letterPossibilities = {  {'A','A','A','F','R','S'}, {'A','A','E','E','E','E'}, {'A','A','F','I','R','S'}, {'A','D','E','N','N','N'}, {'A','E','E','E','E','M'},
@@ -53,10 +52,10 @@ public class BoggleGame extends BoggleGUI{
      *         -1 if there is no winner yet
      */
     public static int isWinner(Player player1, Player player2) {
-        if (player1.getScore() >= targetScore) {
+        if (player1.getScore() >= tournamentScore) {
             return 1;
         }
-        else if (player2.getScore() >= targetScore) {
+        else if (player2.getScore() >= tournamentScore) {
             return 2;
         }
         else {
