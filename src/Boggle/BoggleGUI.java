@@ -69,7 +69,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
     public BoggleGUI() {
 
         player1 = new Human("Player 1", 0);
-        player2 = new Human("Player 1", 0);
+        player2 = new Human("Player 2", 0);
         comp = new Computer("Computer", 0, 0);
         // Initialize class properties
         setSize(1200, 670);
@@ -502,8 +502,10 @@ public class BoggleGUI extends JFrame implements ActionListener {
                         } else {
                             if (p1Turn) {
                                 player1.addScore(word.getText());
+                                wordLabel.setText("Last word: " + word.getText());
                             } else {
                                 comp.addScore(word.getText());
+                                wordLabel.setText("Last word: " + word.getText());
                             }
                             isThereAWinner = BoggleGame.isWinner(player1, comp);
 // conlfict
@@ -595,13 +597,17 @@ public class BoggleGUI extends JFrame implements ActionListener {
             if (difficultyNumber == 1) {
                 compWord = comp.getString_easy();
                 targetScore.setText("Last Word: " + compWord);
-                comp.addScore(compWord);
+                if(p1Turn == false){
+                    comp.addScore(compWord);
+                }
                 p2.setText("Computer: " + comp.getScore());
             }
             else if (difficultyNumber == 2) {
                 compWord = comp.getWord_Hard();
                 targetScore.setText("Last Word: " + compWord);
+                if(p1Turn == false){
                 comp.addScore(compWord);
+                }
                 p2.setText("Computer: " + comp.getScore());
             }
             if (isThereAWinner == 2) {

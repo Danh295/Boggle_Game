@@ -136,8 +136,9 @@ public class Computer extends Player {
      * @return the current shortest valid word
      */
     public String getString_easy() {
+        String minWord = possibleWords.get(0);
         if (!possibleWords.isEmpty()) {
-            String minWord = possibleWords.get(0);
+            minWord = possibleWords.get(0);
 
             for (String word : possibleWords) {
                 if (word.length() > tournamentScore) {
@@ -150,7 +151,7 @@ public class Computer extends Player {
             usedWords.add(minWord);
             return minWord;
         }
-        return null;
+        return minWord;
     }
 
     /**

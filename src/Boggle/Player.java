@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public abstract class Player {
     public String name;
-    public int score;
+    private int score;
 
 
     public final ArrayList<String> usedWords = new ArrayList<>();
