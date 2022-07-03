@@ -163,7 +163,7 @@ public class BoggleGUI extends JFrame implements ActionListener {
 
         word = new JTextField("Enter word"); // Text field so player can enter the word they found
         wordPrompt.add(word); // Adding the text field to the panel
-        word.setColumns(10);
+        word.setColumns(10);    
         ok = new JButton("OK"); // Ok button for when user inputted word
         wordPrompt.add(ok); // Adding the ok button
         ok.addActionListener(this); // Add action listener to the button
